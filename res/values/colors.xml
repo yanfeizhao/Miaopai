@@ -3,4 +3,7 @@
     <color name="white">#FFFFFF</color>
     <color name="button_stroke">#E4DFD5</color>
     <color name="launch_back">#f8f8f8</color>
+    <!-- 分享界面用到颜色 -->
+	   <color name="black">#000000</color>
+	   <color name="text_title">#2c2c2c</color>
 </resources>

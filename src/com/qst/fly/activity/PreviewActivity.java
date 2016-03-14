@@ -47,6 +47,7 @@ public class PreviewActivity extends Activity implements OnClickListener{
 		saveBtn = (Button) findViewById(R.id.btn_save);
 		
 		retakeBtn.setOnClickListener(this);
+		shareBtn.setOnClickListener(this);
 	}
 
 	private void getPicPath(Intent intent) {
@@ -74,7 +75,8 @@ public class PreviewActivity extends Activity implements OnClickListener{
 			Toast.makeText(this, "��Ƭ�Ѿ�����" + picPath, Toast.LENGTH_LONG).show();
 			break;
 		case R.id.btn_share:
-			//TODO ����
+			Intent intent = new Intent(PreviewActivity.this,ShareActivity.class);
+			startActivity(intent);
 			break;
 		default:
 			break;

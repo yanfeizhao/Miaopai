@@ -10,4 +10,14 @@
     <dimen name="margin_of_bottom_menu">7dp</dimen>
     <dimen name="margintop_of_bottom_menu">4dp</dimen>
     <dimen name="marginbottom_of_bottom_menu">6dp</dimen>
+    
+    <!-- 分享界面的字体大小 -->
+    <dimen name="share_appname">35px</dimen>
+    <dimen name="share_title">52px</dimen>
+    <!-- 分享界面margin -->
+    <dimen name="margin_left_or_right_share">53px</dimen><!-- 93px -->
+    <dimen name="margin_applogo_share">20px</dimen><!-- 70px -->
+    <dimen name="margin_logo_name_share">33px</dimen><!-- 33px -->
+    <dimen name="margin_top_share">707px</dimen><!-- 707px -->
+    <dimen name="margin_bottom_subtitle">27px</dimen><!-- 27px 明星喵拍秀-->
 </resources>

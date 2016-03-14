@@ -12,4 +12,13 @@
     <string name="ptr_loading">Loading</string>
     <string name="ptr_last_updated">Updated: %1$s</string>
 
+     <!-- 分享界面的字符串 -->
+    <string name="share_to_friends">分享给朋友们</string>
+    <string name="wechat">微信</string>
+    <string name="friends">朋友圈</string>
+    <string name="weibo">微博</string>
+    <string name="qq">QQ</string>
+    <string name="qqzone">QQ空间</string>
+    
+    <string name="star_show">明星喵拍秀</string>
 </resources>
