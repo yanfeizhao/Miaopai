@@ -1,0 +1,11 @@
+package com.qst.fly.config;
+/**
+* @author smallzoo
+* @version
+* @date 2016年3月14日 上午10:51:55
+* 类说明
+*/
+public class SizeConfig {
+	public static int sPictureWidth = 750;
+	public static int sPictureHeight = 1334;
+}
