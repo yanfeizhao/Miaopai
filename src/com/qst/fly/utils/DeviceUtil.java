@@ -5,8 +5,11 @@ import android.graphics.Point;
 import android.view.WindowManager;
 
 /**
- * Created by NoahZu on 2016/3/11.
- */
+*@author NoahZu
+* @version
+* @date 2016年3月12日 下午1:50:37
+* 设备相关工具类
+*/
 public class DeviceUtil {
 
     /**
