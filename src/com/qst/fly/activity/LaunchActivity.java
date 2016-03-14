@@ -117,7 +117,7 @@ public class LaunchActivity extends BaseActivity {
 				try {
 					Bitmap myBitmap = Glide
 							.with(this.context)
-						    .load(ImageCreator.mPictures.get(i)) 
+						    .load(ImageCreator.mPictures.get(i).picturePath) 
 						    .asBitmap() 
 						    .centerCrop() 
 						    .into(300,300) 
