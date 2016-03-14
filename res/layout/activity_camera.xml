@@ -1,0 +1,37 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.qst.fly.activity.CameraPreviewActivity" >
+    <SurfaceView 
+        android:id="@+id/sf_dis_camera"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+    <ImageButton
+        android:id="@+id/btn_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+		android:layout_alignParentRight="true"
+		android:background="@drawable/btn_switch_selector"
+		android:layout_marginRight="7dp"
+		android:layout_marginTop="5dp"
+        />
+    <ImageButton
+        android:id="@+id/btn_flash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/btn_flash_selector"
+        android:layout_marginLeft="7dp"
+		android:layout_marginTop="5dp"
+        />
+        <Button
+        android:id="@+id/btn_openalbum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="打开相册" />
+</RelativeLayout>

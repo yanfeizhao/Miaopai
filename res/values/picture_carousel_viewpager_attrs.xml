@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="PictureCarouselViewPager">
+        <attr name="civ_border_color" format="color|boolean" />
+        <attr name="content_width" format="dimension" />
+        <attr name="content_height" format="dimension" />
+        <attr name="navigation_width" format="dimension" />
+        <attr name="navigation_height" format="dimension" />
+        <attr name="navigation_layout_gravity" format="boolean"/>
+        <attr name="navigation_background" format="reference|color" />
+        <attr name="navigation_padding" format="dimension"/>
+        <attr name="navigation_paddingLeft" format="dimension"/>
+        <attr name="navigation_paddingTop" format="dimension"/>
+        <attr name="navigation_paddingRight" format="dimension"/>
+        <attr name="navigation_paddingBottom" format="dimension"/>
+        <attr name="navigation_orientation">
+        	<flag name="horizontal" value="0" /> 
+        	<flag name="vertical" value="1" />    
+        </attr>
+        <attr name="navigation_gravity">
+            <flag name="center" value="17" />
+        </attr>
+        <attr name="indicators_width" format="dimension"/>
+        <attr name="indicators_height" format="dimension"/>
+        <attr name="indicators_margin" format="dimension"/>
+        <attr name="indicators_marginLeft" format="dimension"/>
+        <attr name="indicators_marginTop" format="dimension"/>
+        <attr name="indicators_marginRight" format="dimension"/>
+        <attr name="indicators_marginBottom" format="dimension"/>
+        <attr name="indicators_background_chosed" format="reference|color" />
+        <attr name="indicators_background_normal" format="reference|color" />
+        <attr name="imgs_width" format="dimension"/>
+        <attr name="imgs_height" format="dimension"/>
+    </declare-styleable>
+
+</resources>

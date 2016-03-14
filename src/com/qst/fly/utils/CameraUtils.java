@@ -1,0 +1,57 @@
+package com.qst.fly.utils;
+
+import java.util.List;
+
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
+
+/**
+* @author NoahZu
+* @version
+* @date 2016年3月12日 下午1:50:37
+* 类说明
+*/
+public class CameraUtils {
+	
+	/**
+	 * 减产设备是否有摄像头
+	 * @param context
+	 * @return
+	 */
+	public static boolean checkCameraHardware(Context context) {
+	    if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+	        // this device has a camera 
+	        return true; 
+	    } else { 
+	        // no camera on this device 
+	        return false; 
+	    } 
+	} 
+	/**
+	 * 获取相机的功能集合
+	 * @param mCamera
+	 * @return
+	 */
+	public static List<String> getFeaturesOfCamera(Camera mCamera){
+		Camera.Parameters params = mCamera.getParameters(); 
+
+		List<String> focusModes = params.getSupportedFocusModes();
+		return focusModes;
+	}
+	
+	/**
+	 * 检查相机是否具备某一个功能
+	 * @param feature 比如 Camera.Parameters.FLASH_MODE_ON
+	 * @param mCamera 
+	 * @return
+	 */
+	public static boolean checkFeatureOfCamera(String feature,Camera mCamera){
+		List<String> focusModes = getFeaturesOfCamera(mCamera);
+		if (focusModes.contains(feature)) {
+			return true;
+		} 
+		return false;
+	}
+	
+}
