@@ -5,9 +5,10 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="19"
+        android:minSdkVersion="17"
         android:targetSdkVersion="19" />
     
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-feature android:name="android.hardware.camera" android:required="false" />
@@ -21,14 +22,16 @@
             android:name="com.qst.fly.activity.CameraPreviewActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity 
             android:name="com.qst.fly.activity.PreviewActivity"></activity>
         <activity android:name="com.qst.fly.activity.CropPhotoActivity"></activity>
+    	<activity android:name="com.qst.fly.activity.LaunchActivity">
+    	    <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+    	</activity>
     </application>
 
 </manifest>

@@ -17,9 +17,9 @@ public class SharedPreferenceUtil {
         SharedPreferences pref = context.getSharedPreferences(sharedPreferenceName, context.MODE_PRIVATE);
         return pref.getString(tag,"");
     }
-    public static boolean getBoolean(Context context,String tag) {
+    public static boolean getBoolean(Context context,String tag,boolean defValue) {
         SharedPreferences pref = context.getSharedPreferences(sharedPreferenceName, context.MODE_PRIVATE);
-        return pref.getBoolean(tag, false);
+        return pref.getBoolean(tag, defValue);
     }
     public static float getFloat(Context context,String tag) {
         SharedPreferences pref = context.getSharedPreferences(sharedPreferenceName, context.MODE_PRIVATE);

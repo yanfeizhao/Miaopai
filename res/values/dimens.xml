@@ -6,5 +6,8 @@
     <dimen name="indicator_internal_padding">4dp</dimen>
     <dimen name="header_footer_left_right_padding">24dp</dimen>
     <dimen name="header_footer_top_bottom_padding">12dp</dimen>
-
+    
+    <dimen name="margin_of_bottom_menu">7dp</dimen>
+    <dimen name="margintop_of_bottom_menu">4dp</dimen>
+    <dimen name="marginbottom_of_bottom_menu">6dp</dimen>
 </resources>

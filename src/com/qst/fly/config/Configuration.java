@@ -5,7 +5,9 @@ package com.qst.fly.config;
 * @date 2016年3月14日 上午10:51:55
 * 类说明
 */
-public class SizeConfig {
+public class Configuration {
 	public static int sPictureWidth = 1080;
 	public static int sPictureHeight = 1920;
+	
+	public static String MIAOPAI_FILE_PATH = "miaopai";
 }

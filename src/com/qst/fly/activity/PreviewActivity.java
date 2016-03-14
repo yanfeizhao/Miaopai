@@ -52,7 +52,8 @@ public class PreviewActivity extends Activity implements OnClickListener{
 	private void getPicPath(Intent intent) {
 		String path = intent.getStringExtra(CameraPreviewActivity.PICPATH);
 		bitmap = BitmapFactory.decodeFile(path);
-		bitmap = BitmapUtil.roateImage(bitmap, -90f);//��תͼƬ
+		bitmap = BitmapUtil.roateImage(bitmap, -90f);//翻转
+		bitmap = BitmapUtil.mirrorRoate(bitmap);//对图片做镜面翻转
 		imageView.post(new Runnable() {
 			@Override
 			public void run() {
