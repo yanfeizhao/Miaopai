@@ -6,6 +6,6 @@ package com.qst.fly.config;
 * 类说明
 */
 public class SizeConfig {
-	public static int sPictureWidth = 750;
-	public static int sPictureHeight = 1334;
+	public static int sPictureWidth = 1080;
+	public static int sPictureHeight = 1920;
 }
