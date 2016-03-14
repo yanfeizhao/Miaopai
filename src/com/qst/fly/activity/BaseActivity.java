@@ -2,9 +2,8 @@ package com.qst.fly.activity;
 
 
 
-import com.qst.R;
+import com.qst.fly.R;
 
-import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;

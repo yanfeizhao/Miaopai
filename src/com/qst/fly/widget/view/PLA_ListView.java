@@ -18,7 +18,7 @@ package com.qst.fly.widget.view;
 
 import java.util.ArrayList;
 
-import com.qst.R;
+import com.qst.fly.R;
 
 import android.content.Context;
 import android.content.res.TypedArray;

@@ -3,7 +3,7 @@ package com.qst.fly.activity;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.qst.R;
+import com.qst.fly.R;
 import com.qst.fly.widget.CropImageView;
 
 import android.app.Activity;

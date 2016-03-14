@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import com.qst.R;
+import com.qst.fly.R;
 import com.qst.fly.utils.CameraOperationHelper;
-import com.qst.fly.utils.StringUtils;
 import com.qst.fly.utils.CameraOperationHelper.CameraOverCallback;
+import com.qst.fly.utils.StringUtils;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;

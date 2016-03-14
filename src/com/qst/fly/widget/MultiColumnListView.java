@@ -19,7 +19,8 @@ package com.qst.fly.widget;
 
 
 
-import com.qst.R;
+
+import com.qst.fly.R;
 import com.qst.fly.widget.view.PLA_AbsListView;
 import com.qst.fly.widget.view.PLA_ListView;
 

@@ -1,6 +1,6 @@
 package com.qst.fly.activity;
 
-import com.qst.R;
+import com.qst.fly.R;
 import com.qst.fly.utils.BitmapUtil;
 
 import android.app.Activity;
