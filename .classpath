@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="libs/gson-2.6.2.jar"/>
 	<classpathentry kind="lib" path="libs/okio-1.6.0.jar"/>
 	<classpathentry kind="lib" path="libs/okhttp-2.7.5.jar"/>
+	<classpathentry kind="lib" path="libs/glide-3.7.0.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
