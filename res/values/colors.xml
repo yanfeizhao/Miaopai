@@ -6,4 +6,7 @@
     <!-- 分享界面用到颜色 -->
 	   <color name="black">#000000</color>
 	   <color name="text_title">#2c2c2c</color>
+	   
+	   
+	<color name="h_list_back">#22000000</color>
 </resources>

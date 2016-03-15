@@ -9,6 +9,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:background="@drawable/ic_launcher"
+        android:background="@drawable/prompt_box"
         android:text="我是内容"/>
 </RelativeLayout>

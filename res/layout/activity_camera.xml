@@ -2,87 +2,93 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.qst.fly.activity.CameraPreviewActivity" >
-
-    <RadioGroup
-        android:id="@+id/rg_menu"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/marginbottom_of_bottom_menu"
-        android:layout_marginTop="@dimen/margintop_of_bottom_menu"
-        android:orientation="horizontal" >
-
-        <RadioButton
-            android:id="@+id/album"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/margin_of_bottom_menu"
-            android:layout_marginRight="@dimen/margin_of_bottom_menu"
-            android:layout_weight="1"
-            android:background="@drawable/selector_btn_album"
-            android:button="@null"
-            android:gravity="center" />
-
-        <RadioButton
-            android:id="@+id/animal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/margin_of_bottom_menu"
-            android:layout_marginRight="@dimen/margin_of_bottom_menu"
-            android:layout_weight="1"
-            android:background="@drawable/selector_btn_animal"
-            android:button="@null"
-            android:gravity="center"
-            android:checked="true" />
-
-        <RadioButton
-            android:id="@+id/emoji"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/margin_of_bottom_menu"
-            android:layout_marginRight="@dimen/margin_of_bottom_menu"
-            android:layout_weight="1"
-            android:background="@drawable/selector_btn_emoji"
-            android:button="@null"
-            android:gravity="center" />
-
-        <RadioButton
-            android:id="@+id/baozou"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/margin_of_bottom_menu"
-            android:layout_marginRight="@dimen/margin_of_bottom_menu"
-            android:layout_weight="1"
-            android:background="@drawable/selector_btn_baozou_cartoon"
-            android:button="@null"
-            android:gravity="center" />
-
-        <RadioButton
-            android:id="@+id/person"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/margin_of_bottom_menu"
-            android:layout_marginRight="@dimen/margin_of_bottom_menu"
-            android:layout_weight="1"
-            android:background="@drawable/selector_btn_person"
-            android:button="@null"
-            android:gravity="center" />
-    </RadioGroup>
+    tools:context="com.qst.fly.activity.CameraPreviewActivity" xmlns:app="http://schemas.android.com/apk/res/com.qst.fly">
 
     <SurfaceView
         android:id="@+id/sf_dis_camera"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/rg_menu" />
+        android:layout_height="match_parent" />
 
     
-    <com.meetme.android.horizontallistview.HorizontalListView
-        android:id="@+id/h_lv_picture"
+    <LinearLayout
+        android:id="@+id/ll_select_theme"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:visibility="invisible" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/h_list_back" 
+        android:orientation="vertical" >
 
+        <com.meetme.android.horizontallistview.HorizontalListView
+            android:id="@+id/h_lv_picture"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            app:dividerWidth="5dp"
+            android:paddingTop="@dimen/hor_list_top"
+            android:paddingBottom="@dimen/hor_list_bottom"/>
+
+        <RadioGroup
+            android:id="@+id/rg_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/bottom_of_bottom_menu"
+            android:layout_marginTop="@dimen/top_of_bottom_menu"
+            android:orientation="horizontal"
+            android:background="@android:color/white"
+          >
+
+            <RadioButton
+                android:id="@+id/album"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_of_bottom_menu"
+                android:layout_marginRight="@dimen/margin_of_bottom_menu"
+                android:background="@drawable/selector_btn_album"
+                android:button="@null"
+                android:gravity="center" />
+
+            <RadioButton
+                android:id="@+id/animal"
+              android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_of_bottom_menu"
+                android:layout_marginRight="@dimen/margin_of_bottom_menu"
+                android:background="@drawable/selector_btn_animal"
+                android:button="@null"
+                android:checked="true"
+                android:gravity="center" />
+
+            <RadioButton
+                android:id="@+id/emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_of_bottom_menu"
+                android:layout_marginRight="@dimen/margin_of_bottom_menu"
+                android:background="@drawable/selector_btn_emoji"
+                android:button="@null"
+                android:gravity="center" />
+
+            <RadioButton
+                android:id="@+id/baozou"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_of_bottom_menu"
+                android:layout_marginRight="@dimen/margin_of_bottom_menu"
+                android:background="@drawable/selector_btn_baozou_cartoon"
+                android:button="@null"
+                android:gravity="center" />
+
+            <RadioButton
+                android:id="@+id/person"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_of_bottom_menu"
+                android:layout_marginRight="@dimen/margin_of_bottom_menu"
+                android:background="@drawable/selector_btn_person"
+                android:button="@null"
+                android:gravity="center" />
+        </RadioGroup>
+    </LinearLayout>
+    
     <ImageButton
         android:id="@+id/btn_switch"
         android:layout_width="wrap_content"
@@ -109,25 +115,26 @@
         android:layout_height="200dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:background="@android:color/white"
+        android:orientation="vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:orientation="vertical"
-        android:background="@android:color/white"
-        android:visibility="invisible"
-        >
+        android:layout_marginBottom="10dp"
+        android:visibility="gone" >
+
         <ImageView
             android:id="@+id/img_float_item"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:src="@drawable/play"
-            />
-        <TextView 
+            android:src="@drawable/play" />
+
+        <TextView
             android:id="@+id/text_float_item"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            />
+            android:text="优雅猫" />
     </LinearLayout>
+
 </RelativeLayout>
