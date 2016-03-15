@@ -21,4 +21,7 @@
     <string name="qqzone">QQ空间</string>
     
     <string name="star_show">明星喵拍秀</string>
+    
+    <string name="choosealbum">选择相册</string>
+    <string name="choosephoto">选择照片</string>
 </resources>
