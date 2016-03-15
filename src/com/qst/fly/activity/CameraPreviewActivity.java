@@ -1,6 +1,7 @@
 package com.qst.fly.activity;
 
 import java.io.File;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.List;
 
 import com.meetme.android.horizontallistview.HorizontalListView;
 import com.qst.fly.R;
+import com.qst.fly.adapter.PictureSelectListAdapter;
 import com.qst.fly.entity.Picture;
 import com.qst.fly.utils.CameraOperationHelper;
 import com.qst.fly.utils.CameraOperationHelper.CameraOverCallback;
@@ -16,6 +18,7 @@ import com.qst.fly.utils.StringUtils;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
@@ -32,6 +35,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -48,32 +53,40 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 	private static final String CAMERA_PATH = "cameraDemos";
 	private static final String TAG = "MainActivity";
 	public static final String PICPATH = "picturePath";
+	public static final int STATUS_SELECT_THEME = 0;
+	public static final int STATUS_TAKE_PHOTO = 1;
 	private static final int CROP_PHOTO = 1;
 	private static final int PICK_PHOTO = 2;
 	
 	public static String FROM = "from";
 	public static String FROM_LAUNCH = "FLAG_FROM_LAUNCH";
 	public static String FROM_PREVIEW = "FROM_PREVIEW";
-
 	
+	private int currentStatus = STATUS_SELECT_THEME;
+
+	private HorizontalListView mHorizontalListView;
+	private PictureSelectListAdapter adapter;
 	private List<Picture> mAnimalPictures;
 	private List<Picture> mEmojiPictures;
 	private List<Picture> mBaozouPictures;
 	private List<Picture> mPersonPictures;
+
 	
 	private ImageButton switchCameraBtn;
 	private ImageButton flashBtn;
 	private SurfaceView disCameraSurface;
 	private RadioGroup mMenuRadio;
-	private LinearLayout mLinearFloatItem;
-	private ImageView mImageFloatItem;
-	private TextView mTextFloatItem;
+	
+	private LinearLayout mLinearFloatingImage;
+	private LinearLayout mLinearFloatingMenu;
+	private ImageView mImageFloatImage;
+	private TextView mTextFloatImage;
 	
 	private SurfaceHolder disCameraSurfaceHolder;
 	private CameraOperationHelper cameraOperationHelper;
 	
 
-	private HorizontalListView mHorizontalListView;
+	
 
 	private SoundPool soundPool;
 	private boolean isFlashing = false;
@@ -92,6 +105,24 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 		loadData();
 	}
 	
+	private void floatingMoveUp(){
+		ObjectAnimator moveUpAnimator = ObjectAnimator.ofFloat(mLinearFloatingMenu, "translationY", 0);
+		ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(mLinearFloatingMenu, "alpha", 0.5f,1f);
+		AnimatorSet animatorSet = new AnimatorSet();
+		animatorSet.play(moveUpAnimator).with(alphaAnimator);
+		animatorSet.setDuration(1000);
+		animatorSet.start();
+		currentStatus = STATUS_SELECT_THEME;
+	}
+	private void floatingMoveDown(){
+		ObjectAnimator moveDownAnimator = ObjectAnimator.ofFloat(mLinearFloatingMenu, "translationY", 0f,(mLinearFloatingMenu.getHeight()*2)/3);
+		ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(mLinearFloatingMenu, "alpha", 1f,0.5f);
+		AnimatorSet animatorSet = new AnimatorSet();
+		animatorSet.play(moveDownAnimator).with(alphaAnimator);
+		animatorSet.setDuration(1000);
+		animatorSet.start();
+		currentStatus = STATUS_TAKE_PHOTO;
+	}
 	/**
 	 * 初始化声音
 	 */
@@ -108,9 +139,10 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 
 
 	private void initView() {
-		mLinearFloatItem = (LinearLayout) findViewById(R.id.ll_float_select_item);
-		mImageFloatItem = (ImageView) findViewById(R.id.img_float_item);
-		mTextFloatItem = (TextView) findViewById(R.id.text_float_item);
+		mLinearFloatingMenu = (LinearLayout) findViewById(R.id.ll_select_theme);
+		mLinearFloatingImage = (LinearLayout) findViewById(R.id.ll_float_select_item);
+		mImageFloatImage = (ImageView) findViewById(R.id.img_float_item);
+		mTextFloatImage = (TextView) findViewById(R.id.text_float_item);
 		
 		mMenuRadio = (RadioGroup) findViewById(R.id.rg_menu);
 		mMenuRadio.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -151,7 +183,23 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 
 	private void loadData() {
 		mAnimalPictures = new ArrayList<Picture>(ImageCreator.mPictures);
-		
+		adapter = new PictureSelectListAdapter(this, mAnimalPictures, R.layout.item_select_picture);
+		mHorizontalListView.setAdapter(adapter);
+		mHorizontalListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				if(currentStatus == STATUS_TAKE_PHOTO){
+					mLinearFloatingImage.setVisibility(View.INVISIBLE);
+					floatingMoveUp();
+				}else{
+					floatingMoveDown();
+					//TODO 替换成具体的图片
+					mLinearFloatingImage.setVisibility(View.VISIBLE);
+					mImageFloatImage.setImageResource(R.drawable.demo);
+				}
+			}
+		});
 	}
 	
 	
@@ -173,9 +221,9 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 				openCropActivity(data);
 			} else if (requestCode == CROP_PHOTO) {
 				Bitmap bitmap = data.getParcelableExtra("cropedPhoto");
-				mLinearFloatItem.setVisibility(View.VISIBLE);
-				mImageFloatItem.setImageBitmap(bitmap);
-				//TODO HorizontalListView和底部的RadioGroup下移
+				floatingMoveDown();
+				mLinearFloatingImage.setVisibility(View.VISIBLE);
+				mImageFloatImage.setImageBitmap(bitmap);
 			}
 		}
 	}

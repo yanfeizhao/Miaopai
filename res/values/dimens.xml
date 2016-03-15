@@ -12,6 +12,7 @@
     <dimen name="bottom_of_bottom_menu">3dp</dimen>
     <dimen name="hor_list_top">10dp</dimen>
     <dimen name="hor_list_bottom">10dp</dimen>
+    <dimen name="launch_top">100dp</dimen>
     
     <!-- 分享界面的字体大小 -->
     <dimen name="share_appname">35px</dimen>
