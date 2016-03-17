@@ -5,25 +5,38 @@
  * @author yanfeizhao 417470640@qq.com 
  * @date 2016-3-15 上午10:02:17 
  * @version V1.0 
- */  
+ */
 package com.qst.fly.adapter;
-import java.util.List;
-import android.content.Context;
-import com.qst.fly.R;
-import com.qst.fly.entity.ImageInfo;
 
-public class ImageShareListAdapter extends CommonAdapter<ImageInfo>{
+import java.util.List;
+
+import android.content.Context;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
+import com.qst.fly.R;
+import com.qst.fly.entity.Picture;
+import com.squareup.picasso.Picasso;
+
+public class ImageShareListAdapter extends CommonAdapter<Picture> {
 
 	private static final int LAYOUT_ID = R.layout.item_image_sharelist;
-	
-	public ImageShareListAdapter(Context context, List<ImageInfo> mDatas) {
+
+	private Context mContext;
+
+	public ImageShareListAdapter(Context context, List<Picture> mDatas) {
 		super(context, mDatas, LAYOUT_ID);
+		this.mContext = context;
 	}
-	
+
 	@Override
-	public void convert(ViewHolder helper, ImageInfo item, int position) {
-		
-		helper.setImageResource(R.id.img_sharelist, item.getImageId());
+	public void convert(ViewHolder helper, Picture item, int position) {
+		ImageView img = (ImageView) helper.getView(R.id.img_sharelist);
+
+		Picasso.with(mContext).load(item.img).placeholder(R.drawable.ic_launcher).error(R.drawable.demo)
+				.into(img);
+		// 控制左右边距。
+		// if(position)
 	}
 
 }

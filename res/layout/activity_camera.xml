@@ -21,11 +21,10 @@
         <com.meetme.android.horizontallistview.HorizontalListView
             android:id="@+id/h_lv_picture"
             android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            app:dividerWidth="5dp"
+            android:layout_height="@dimen/height_of_hor_list"
+            app:dividerWidth="@dimen/divider_width"
             android:paddingTop="@dimen/hor_list_top"
             android:paddingBottom="@dimen/hor_list_bottom"/>
-
         <RadioGroup
             android:id="@+id/rg_menu"
             android:layout_width="match_parent"
@@ -35,7 +34,6 @@
             android:orientation="horizontal"
             android:background="@android:color/white"
           >
-
             <RadioButton
                 android:id="@+id/album"
                 android:layout_width="wrap_content"
@@ -45,7 +43,6 @@
                 android:background="@drawable/selector_btn_album"
                 android:button="@null"
                 android:gravity="center" />
-
             <RadioButton
                 android:id="@+id/animal"
               android:layout_width="wrap_content"
@@ -62,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin_of_bottom_menu"
-                android:layout_marginRight="@dimen/margin_of_bottom_menu"
+                android:layout_marginRight="@dimen/margin_of_bottom_menu2"
                 android:background="@drawable/selector_btn_emoji"
                 android:button="@null"
                 android:gravity="center" />
@@ -71,8 +68,8 @@
                 android:id="@+id/baozou"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_of_bottom_menu"
-                android:layout_marginRight="@dimen/margin_of_bottom_menu"
+                android:layout_marginLeft="@dimen/margin_of_bottom_menu2"
+                android:layout_marginRight="@dimen/margin_of_bottom_menu2"
                 android:background="@drawable/selector_btn_baozou_cartoon"
                 android:button="@null"
                 android:gravity="center" />
@@ -81,7 +78,7 @@
                 android:id="@+id/person"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_of_bottom_menu"
+                android:layout_marginLeft="@dimen/margin_of_bottom_menu2"
                 android:layout_marginRight="@dimen/margin_of_bottom_menu"
                 android:background="@drawable/selector_btn_person"
                 android:button="@null"
@@ -95,8 +92,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_marginRight="7dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginRight="@dimen/switch_margin_right"
+        android:layout_marginTop="@dimen/switch_margin_top"
         android:background="@drawable/btn_switch_selector" />
 
     <ImageButton
@@ -105,28 +102,29 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="7dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginLeft="@dimen/flash_margin_left"
+        android:layout_marginTop="@dimen/flash_margin_top"
         android:background="@drawable/btn_flash_selector" />
 
     <LinearLayout
         android:id="@+id/ll_float_select_item"
-        android:layout_width="170dp"
-        android:layout_height="200dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:background="@android:color/white"
         android:orientation="vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginRight="@dimen/float_linear_margin_right"
+        android:layout_marginBottom="@dimen/float_linear_margin_bottom"
         android:visibility="gone" >
 
         <ImageView
             android:id="@+id/img_float_item"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="@dimen/float_image_width"
+            android:layout_height="@dimen/float_image_width"
+            android:layout_marginLeft="@dimen/float_image_margin_left"
+            android:layout_marginRight="@dimen/float_image_margin_right"
+            android:layout_marginTop="@dimen/float_image_margin_top"
             android:src="@drawable/play" />
 
         <TextView
@@ -134,7 +132,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="优雅猫" />
+            android:layout_marginTop="@dimen/float_text_margin_top"
+            android:layout_marginBottom="@dimen/float_text_margin_top"
+            android:text="优雅猫"
+            android:textSize="@dimen/float_text_size" />
     </LinearLayout>
 
 </RelativeLayout>

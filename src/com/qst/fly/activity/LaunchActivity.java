@@ -12,46 +12,50 @@ import com.qst.fly.utils.ImageCreator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.widget.ImageView;
 
 /**
-* @author NoahZu
-* @version
-* @date 2016年3月14日 下午3:09:27
-* 类说明
-*/
+ * @author NoahZu
+ * @version
+ * @date 2016年3月14日 下午3:09:27 类说明
+ */
 public class LaunchActivity extends BaseActivity {
-	
-	
+
 	private ImageView mLaunchImage;
 	private ImageView mLaunchImageBack;
-	
+
 	private File currentFile;
 	private File themeFile;
 	private File tempFile;
 	private File saveFile;
+	private SoundPool launchSound;
 
-	//TODO 启动动画
-	//TODO 播放音频
-	
+	// TODO 启动动画
+	// TODO 播放音频
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_launch);
-		
-		
-		
+
 		initView();
+		initLaunchSound();
+		initFile();
+		launch();
+	}
+
+	private void launch() {
 		new Thread(new Runnable() {
-			
 			@Override
 			public void run() {
 				try {
 					Thread.sleep(3000);
 					runOnUiThread(new Runnable() {
-						
 						@Override
 						public void run() {
 							enterCameraPreview();
@@ -60,22 +64,34 @@ public class LaunchActivity extends BaseActivity {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				
+
 			}
 		}).start();
-		initFile();
-		new MyLoadPicture(getApplicationContext(),themeFile).start();//开始下载图片
+		new MyLoadPicture(getApplicationContext(), themeFile).start();// 开始下载图片
 	}
 
-	
+	/**
+	 * 初始化声音
+	 */
+	private void initLaunchSound() {
+		launchSound = new SoundPool(21, AudioManager.STREAM_SYSTEM, 10);
+		launchSound.load(this, R.raw.launch_sound, 1);
+		launchSound.setOnLoadCompleteListener(new OnLoadCompleteListener() {
+			
+			@Override
+			public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+				launchSound.play(1,1, 1, 0, 0,  1f);
+			}
+		});
+	}
 
 	private void initFile() {
-		currentFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH);
-		if(!currentFile.exists()){
+		currentFile = new File(Environment.getExternalStorageDirectory(), Configuration.MIAOPAI_FILE_PATH);
+		if (!currentFile.exists()) {
 			currentFile.mkdir();
-			tempFile = new File(currentFile,"temp");
-			saveFile = new File(currentFile,"saved");
-			themeFile = new File(currentFile,"theme");
+			tempFile = new File(currentFile, Configuration.MIAOPAI_TEMP_PATH);
+			saveFile = new File(currentFile, Configuration.MIAOPAI_SAVED_PATH);
+			themeFile = new File(currentFile, Configuration.MIAOPAI_THEME_PATH);
 			tempFile.mkdir();
 			saveFile.mkdir();
 			themeFile.mkdir();
@@ -83,57 +99,48 @@ public class LaunchActivity extends BaseActivity {
 	}
 
 	private void enterCameraPreview() {
-		//TODO 进入照相机界面
-		Intent intent = new Intent(LaunchActivity.this,CameraPreviewActivity.class);
+		// TODO 进入照相机界面
+		Intent intent = new Intent(LaunchActivity.this, CameraPreviewActivity.class);
 		startActivity(intent);
 		finish();
 	}
-
 
 	private void initView() {
 		mLaunchImage = (ImageView) findViewById(R.id.img_launch);
 		mLaunchImageBack = (ImageView) findViewById(R.id.img_launch_back);
 	}
-	
-	
-	static class MyLoadPicture extends Thread{
+
+	static class MyLoadPicture extends Thread {
 		private Context context;
 		private File themeFile;
-		public MyLoadPicture(Context context,File themeFile){
+
+		public MyLoadPicture(Context context, File themeFile) {
 			this.context = context;
 			this.themeFile = themeFile;
 		}
-		
+
 		@Override
 		public void run() {
 			super.run();
 			loadPicture();
 		}
-		
-		
-		
+
 		private void loadPicture() {
-			for(int i = 0;i<ImageCreator.mPictures.size();i++){
+			for (int i = 0; i < ImageCreator.mPictures.size(); i++) {
 				try {
-					Bitmap myBitmap = Glide
-							.with(this.context)
-						    .load(ImageCreator.mPictures.get(i).picturePath) 
-						    .asBitmap() 
-						    .centerCrop() 
-						    .into(300,300) 
-						    .get();
-				
-					File picFile = new File(themeFile,"theme_test"+i+".jpg");
+					Bitmap myBitmap = Glide.with(this.context).load(ImageCreator.mPictures.get(i).img)
+							.asBitmap().centerCrop().into(300, 300).get();
+
+					File picFile = new File(themeFile, "theme_test" + i + ".jpg");
 					BitmapUtil.saveBitmap(myBitmap, picFile.getAbsolutePath());
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				} catch (ExecutionException e) {
 					e.printStackTrace();
-				} 
+				}
 			}
 		}
-		
+
 	}
-	
-	
+
 }

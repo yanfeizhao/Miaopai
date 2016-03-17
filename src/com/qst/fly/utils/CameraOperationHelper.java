@@ -5,10 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
-import android.hardware.Camera.Face;
 import android.hardware.Camera.PictureCallback;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
 /**
@@ -120,6 +120,7 @@ public class CameraOperationHelper {
 		  camera.takePicture(null, null, new PictureCallback() {
 			@Override
 			public void onPictureTaken(byte[] data, Camera camera) {
+				Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 				File file = new File(path);
 				if(!file.exists()){
 					try {
@@ -133,7 +134,7 @@ public class CameraOperationHelper {
 					fos = new FileOutputStream(file);
 					fos.write(data);
 					fos.close();
-					mCameraOverCallback.cameraPhotoTaken(path);
+					mCameraOverCallback.cameraPhotoTaken(path,cameraid);
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -240,7 +241,7 @@ public class CameraOperationHelper {
 	public interface CameraOverCallback{
 		public void cameraFlashModeChanged(int flashMode);
 		public void cameraFacingChanged(boolean hasFaceCamera,int cameraId);
-		public void cameraPhotoTaken(String path);
+		public void cameraPhotoTaken(String path,int cameraId);
 	}
 	
 }

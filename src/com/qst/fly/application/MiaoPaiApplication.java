@@ -3,6 +3,7 @@ package com.qst.fly.application;
 import com.qst.fly.utils.SharedPreferenceUtil;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 
 /**
  * @author NoahZu
@@ -15,6 +16,8 @@ public class MiaoPaiApplication extends Application {
 
 	private static MiaoPaiApplication sMiaoPaiApplication = null;
 
+	private Bitmap mBitmap = null;
+	
 	synchronized public static MiaoPaiApplication getApplication() {
 		if (sMiaoPaiApplication == null) {
 			sMiaoPaiApplication = new MiaoPaiApplication();
@@ -35,5 +38,12 @@ public class MiaoPaiApplication extends Application {
 	
 	public boolean isFirstOpen(){
 		return this.isFirstOpen;
+	}
+	
+	public void saveBitmap(Bitmap bitmap){
+		this.mBitmap = bitmap;
+	}
+	public Bitmap getBitmap(){
+		return this.mBitmap;
 	}
 }

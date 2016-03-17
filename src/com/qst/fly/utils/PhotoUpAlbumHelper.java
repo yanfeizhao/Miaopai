@@ -206,7 +206,7 @@ public class PhotoUpAlbumHelper extends AsyncTask<Object, Object, Object> {
 		public void getAlbumList(List<PhotoUpImageBucket> list);
 	}
 	
-    /**传递数据*/
+    /**传送数据*/
 	protected void onPostExecute(Object result) {
 		super.onPostExecute(result);
 		getAlbumList.getAlbumList((List<PhotoUpImageBucket>) result);

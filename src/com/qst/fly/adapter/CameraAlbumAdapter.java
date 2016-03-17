@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Bitmap.Config;
+import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -17,7 +18,7 @@ import com.qst.fly.entity.PhotoUpImageBucket;
 
 public class CameraAlbumAdapter extends CommonAdapter<PhotoUpImageBucket> {
 
-	private List<PhotoUpImageBucket> arrayList;
+	private List<PhotoUpImageBucket> mlist;
 	// 初始化获取实例
 	private ImageLoader imageLoader = ImageLoader.getInstance();
 	private DisplayImageOptions options;
@@ -26,10 +27,10 @@ public class CameraAlbumAdapter extends CommonAdapter<PhotoUpImageBucket> {
 
 	public CameraAlbumAdapter(Context context, List<PhotoUpImageBucket> mDatas,
 			int itemLayoutId) {
-		super(context, mDatas, R.id.listview_album);
+		super(context, mDatas, R.layout.album_item);
 
-		arrayList = new ArrayList<PhotoUpImageBucket>();
-
+		mlist = new ArrayList<PhotoUpImageBucket>();
+		// 视图加载器
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
 				context).threadPriority(Thread.NORM_PRIORITY - 2)
 				.denyCacheImageMultipleSizesInMemory()
@@ -60,17 +61,18 @@ public class CameraAlbumAdapter extends CommonAdapter<PhotoUpImageBucket> {
 	@Override
 	public void convert(ViewHolder helper, PhotoUpImageBucket item, int position) {
 
-		// helder.setText(R.id.text_fromwhichapp,""+arrayList.get(position).getCount());
-		// helder.setText(arrayList.get(position).getBucketName());
-		//
-		// imageLoader.displayImage("file://"+arrayList.get(position).getImageList().get(0).getImagePath(),
-		// helder.image, options);
-		// return convertView;
+		helper.setText(R.id.text_numofphoto, "" + item.getCount());
+		helper.setText(R.id.text_fromwhichapp, item.getBucketName());
+		ImageView imageViews = helper.getView(R.id.img_albumitem);
+		imageLoader
+				.displayImage("file://"
+						+ item.getImageList().get(0).getImagePath(), imageViews,
+						options);
 	}
 
-	// 设置相册列表数据，主要用于把相册数据传递到Adapter中
-	public void setArrayList(List<PhotoUpImageBucket> arrayList) {
-		this.arrayList = arrayList;
+	/** 设置相册列表数据，主要用于把相册数据传递到Adapter中 */
+	public void setArrayList(List<PhotoUpImageBucket> mlist) {
+		this.mlist = mlist;
 	}
 
 }

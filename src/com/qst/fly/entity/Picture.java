@@ -7,9 +7,16 @@ package com.qst.fly.entity;
 */
 public class Picture {
 	
-	public String picturePath;
+	public String img;
+	public String title;
 	
 	public Picture(String path){
-		this.picturePath = path;
+		this.img = path;
 	}
+	public Picture(String path,String title){
+		this.img = path;
+		this.title = title;
+	}
+	
+	
 }

@@ -35,5 +35,10 @@
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">@dimen/share_title</item>
     </style>
-
+    
+       <!-- 收起来的app小图标样式-->
+      <style name="share_smallapp">
+        <item name="android:layout_marginTop">@dimen/margin_top_smallicon</item>
+        <item name="android:layout_marginRight">@dimen/margin_right_smallicon_between</item>
+    </style>
 </resources>

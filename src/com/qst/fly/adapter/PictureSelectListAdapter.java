@@ -5,6 +5,8 @@ import java.util.List;
 import com.bumptech.glide.Glide;
 import com.qst.fly.R;
 import com.qst.fly.entity.Picture;
+import com.qst.fly.utils.PicassoCache;
+import com.squareup.picasso.Picasso;
 
 import android.content.Context;
 import android.widget.ImageView;
@@ -25,7 +27,10 @@ public class PictureSelectListAdapter extends CommonAdapter<Picture> {
 	@Override
 	public void convert(ViewHolder helper, Picture item, int position) {
 		ImageView imageView = helper.getView(R.id.img_item_pic);
-//		Glide.with(this.context).load(item.picturePath).into(imageView);
+		Picasso picasso = Picasso.with(this.context);
+		picasso.setIndicatorsEnabled(true);
+		picasso.load(item.img).into(imageView);
+//		PicassoCache.getPicassoInstance(mContext).load(item.img).into(imageView);
 	}
 
 }

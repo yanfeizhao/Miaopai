@@ -1,7 +1,6 @@
 package com.qst.fly.activity;
 
 import java.io.File;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,10 +9,15 @@ import java.util.List;
 import com.meetme.android.horizontallistview.HorizontalListView;
 import com.qst.fly.R;
 import com.qst.fly.adapter.PictureSelectListAdapter;
+import com.qst.fly.config.Configuration;
 import com.qst.fly.entity.Picture;
+import com.qst.fly.entity.Theme;
+import com.qst.fly.utils.BitmapUtil;
 import com.qst.fly.utils.CameraOperationHelper;
 import com.qst.fly.utils.CameraOperationHelper.CameraOverCallback;
-import com.qst.fly.utils.ImageCreator;
+import com.qst.fly.utils.JsonUtils;
+import com.qst.fly.utils.OkHttpUtils;
+import com.qst.fly.utils.OkHttpUtils.ResultCallback;
 import com.qst.fly.utils.StringUtils;
 
 import android.animation.Animator;
@@ -23,9 +27,10 @@ import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -55,8 +60,17 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 	public static final String PICPATH = "picturePath";
 	public static final int STATUS_SELECT_THEME = 0;
 	public static final int STATUS_TAKE_PHOTO = 1;
-	private static final int CROP_PHOTO = 1;
-	private static final int PICK_PHOTO = 2;
+	public static final String DECORATION = "decoration";
+	public static final String CAMERA_ID = "cameraId";
+	private static final int REQUEST_PHOTO_ALBUM = 5;
+	private static final int REQUEST_CROP_PHOTO = 8;
+	
+	public static final int THEME_TYPE_ANIMAL = 1;
+	public static final int THEME_TYPE_EMOJI = 2;
+	public static final int THEME_TYPE_BAOZOU = 3;
+	public static final int THEME_TYPE_PERSON = 4;
+	
+	private int currentType = THEME_TYPE_ANIMAL;
 	
 	public static String FROM = "from";
 	public static String FROM_LAUNCH = "FLAG_FROM_LAUNCH";
@@ -65,12 +79,11 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 	private int currentStatus = STATUS_SELECT_THEME;
 
 	private HorizontalListView mHorizontalListView;
-	private PictureSelectListAdapter adapter;
-	private List<Picture> mAnimalPictures;
-	private List<Picture> mEmojiPictures;
-	private List<Picture> mBaozouPictures;
-	private List<Picture> mPersonPictures;
 
+	private List<Picture> mCurrentPictures;//当前显示的数据源
+	
+	//TODO 是否应该创建多个 adapter 答案是否！！！
+	private PictureSelectListAdapter mPictureAdapter;
 	
 	private ImageButton switchCameraBtn;
 	private ImageButton flashBtn;
@@ -84,14 +97,15 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 	
 	private SurfaceHolder disCameraSurfaceHolder;
 	private CameraOperationHelper cameraOperationHelper;
-	
-
-	
 
 	private SoundPool soundPool;
 	private boolean isFlashing = false;
 	private boolean isFront = true;
+	
+	private boolean mLoadPictureFromAlbum = false;
 
+	
+	private int mCameraId = CameraOperationHelper.FRONT_CAMERA;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -102,9 +116,12 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 		initSound();
 		initCamera();
 		initView();
-		loadData();
+		initData();
 	}
 	
+	/**
+	 * 底部菜单移上来
+	 */
 	private void floatingMoveUp(){
 		ObjectAnimator moveUpAnimator = ObjectAnimator.ofFloat(mLinearFloatingMenu, "translationY", 0);
 		ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(mLinearFloatingMenu, "alpha", 0.5f,1f);
@@ -114,6 +131,9 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 		animatorSet.start();
 		currentStatus = STATUS_SELECT_THEME;
 	}
+	/**
+	 * 底部菜单移下去
+	 */
 	private void floatingMoveDown(){
 		ObjectAnimator moveDownAnimator = ObjectAnimator.ofFloat(mLinearFloatingMenu, "translationY", 0f,(mLinearFloatingMenu.getHeight()*2)/3);
 		ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(mLinearFloatingMenu, "alpha", 1f,0.5f);
@@ -137,7 +157,9 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 		cameraOperationHelper = CameraOperationHelper.getInstance();
 	}
 
-
+	/**
+	 * 初始化View
+	 */
 	private void initView() {
 		mLinearFloatingMenu = (LinearLayout) findViewById(R.id.ll_select_theme);
 		mLinearFloatingImage = (LinearLayout) findViewById(R.id.ll_float_select_item);
@@ -152,18 +174,19 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 				((RadioButton)group.findViewById(checkedId)).setChecked(true);
 				if(checkedId == R.id.album){
 					openAlbum();
+					mMenuRadio.check(R.id.animal);
 				}
 				if(checkedId == R.id.animal){
-					Log.d(TAG, "R.id.animal");
+					loadData(THEME_TYPE_ANIMAL);
 				}
 				if(checkedId == R.id.emoji){
-					Log.d(TAG, "R.id.emoji");
+					loadData(THEME_TYPE_EMOJI);
 				}
 				if(checkedId == R.id.baozou){
-					Log.d(TAG, "R.id.baozou");
+					loadData(THEME_TYPE_BAOZOU);
 				}
 				if(checkedId == R.id.person){
-					Log.d(TAG, "R.id.person");
+					loadData(THEME_TYPE_PERSON);
 				}
 			}
 		});
@@ -181,14 +204,20 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 		disCameraSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 	}
 
-	private void loadData() {
-		mAnimalPictures = new ArrayList<Picture>(ImageCreator.mPictures);
-		adapter = new PictureSelectListAdapter(this, mAnimalPictures, R.layout.item_select_picture);
-		mHorizontalListView.setAdapter(adapter);
+	/**
+	 * 初始化数据
+	 */
+	private void initData() {
+		mCurrentPictures = new ArrayList<Picture>();
+		//初始化当前显示的数据源
+		mPictureAdapter = new PictureSelectListAdapter(this, mCurrentPictures, R.layout.item_select_picture);
+		
+		
+		mHorizontalListView.setAdapter(mPictureAdapter);
 		mHorizontalListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
 				if(currentStatus == STATUS_TAKE_PHOTO){
 					mLinearFloatingImage.setVisibility(View.INVISIBLE);
 					floatingMoveUp();
@@ -196,50 +225,82 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 					floatingMoveDown();
 					//TODO 替换成具体的图片
 					mLinearFloatingImage.setVisibility(View.VISIBLE);
-					mImageFloatImage.setImageResource(R.drawable.demo);
+					Picture picture = mCurrentPictures.get(position);
+					Drawable drawable = ((ImageView)view.findViewById(R.id.img_item_pic)).getDrawable();
+					BitmapDrawable bitmapDrawable = ((BitmapDrawable) drawable);
+					Bitmap bitmap = bitmapDrawable .getBitmap();
+					mImageFloatImage.setImageBitmap(bitmap);
+					mTextFloatImage.setText(picture.title);
 				}
 			}
 		});
+
+		loadData(THEME_TYPE_ANIMAL);
 	}
 	
-	
+	private void loadData(final int themeType){
+		//check net status 
+		//fetch from local
+		//fetch online
+		String url = Configuration.BASE_THEME_PIC_URL + "0"+themeType;
+		Log.d(TAG, url);
+		OkHttpUtils.get(url, new ResultCallback<String>() {
+
+			@Override
+			public void onSuccess(String response) {
+				Theme theme = JsonUtils.deserialize(response, Theme.class);
+				if(themeType == THEME_TYPE_ANIMAL){
+					if(theme.status == 200){
+						mCurrentPictures.clear();
+						mCurrentPictures.addAll(theme.result);
+						mPictureAdapter.notifyDataSetChanged();
+					}
+				}else if(themeType == THEME_TYPE_EMOJI){
+					if(theme.status == 200){
+						mCurrentPictures.clear();
+						mCurrentPictures.addAll(theme.result);
+						mPictureAdapter.notifyDataSetChanged();					
+					}
+				}else if(themeType == THEME_TYPE_BAOZOU){
+					if (theme.status == 200) {
+						mCurrentPictures.clear();
+						mCurrentPictures.addAll(theme.result);
+						mPictureAdapter.notifyDataSetChanged();					
+					}
+				}else if(themeType == THEME_TYPE_PERSON){
+					if(theme.status == 200){
+						mCurrentPictures.clear();
+						mCurrentPictures.addAll(theme.result);
+						mPictureAdapter.notifyDataSetChanged();				
+					}
+				}
+			}
+
+			@Override
+			public void onFailure(Exception e) {
+				Log.d(TAG, "fail");
+			}
+		});
+	}
 	
 	/**
 	 * 打开相册	
 	 */
 	private void openAlbum() {
-		Intent getImage = new Intent(Intent.ACTION_GET_CONTENT);
-		getImage.addCategory(Intent.CATEGORY_OPENABLE);
-		getImage.setType("image/*");
-		startActivityForResult(getImage, PICK_PHOTO);
+		Intent intent = new Intent(CameraPreviewActivity.this,AlbumActivity.class);
+		startActivityForResult(intent,REQUEST_PHOTO_ALBUM);
 	}
-	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (resultCode == RESULT_OK) {
-			if (requestCode == PICK_PHOTO) {
-				openCropActivity(data);
-			} else if (requestCode == CROP_PHOTO) {
-				Bitmap bitmap = data.getParcelableExtra("cropedPhoto");
-				floatingMoveDown();
-				mLinearFloatingImage.setVisibility(View.VISIBLE);
-				mImageFloatImage.setImageBitmap(bitmap);
-			}
+		super.onActivityResult(requestCode, resultCode, data);
+		if(resultCode == RESULT_OK && requestCode == REQUEST_PHOTO_ALBUM){
+			Bitmap bitmap = data.getParcelableExtra(AlbumActivity.CROPED_PHOTO);
+			mLinearFloatingImage.setVisibility(View.VISIBLE);
+			mImageFloatImage.setImageBitmap(bitmap);
+			floatingMoveDown();
 		}
-	}
-	
-	/**
-	 * 调到剪裁图片的界面
-	 * @param data
-	 */
-	private void openCropActivity(Intent data) {
-		Intent intent = new Intent(CameraPreviewActivity.this, CropPhotoActivity.class);
 		
-		Uri uri = data.getData();
-		intent.putExtra("uri", uri);
-		startActivityForResult(intent, CROP_PHOTO);
 	}
-	
 	
 	@Override
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -248,7 +309,8 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		cameraOperationHelper.doOpenCamera(CameraOperationHelper.FRONT_CAMERA, this, holder);
+		Log.d(TAG, "surfaceCreated");
+		cameraOperationHelper.doOpenCamera(mCameraId, this, holder);
 		cameraOperationHelper.doStartPreview();
 	}
 
@@ -301,17 +363,20 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 			objectAnimator.start();
 			
 		} else if (v.getId() == R.id.sf_dis_camera) {
-			File file = new File(Environment.getExternalStorageDirectory(), CAMERA_PATH);
-			if (!file.exists()) {
-				file.mkdir();
-			}
-			File picFile = new File(file, StringUtils.formatDate(new Date(), "yyyyMMddHHmmss") + ".jpg");
-			if (!picFile.exists()) {
-				try {
-					picFile.createNewFile();
-					cameraOperationHelper.takePicture(picFile.getAbsolutePath());
-				} catch (IOException e) {
-					e.printStackTrace();
+			//TODO 判断状态
+			if(currentStatus == STATUS_TAKE_PHOTO){
+				File file = new File(Environment.getExternalStorageDirectory(), CAMERA_PATH);
+				if (!file.exists()) {
+					file.mkdir();
+				}
+				File picFile = new File(file, StringUtils.formatDate(new Date(), "yyyyMMddHHmmss") + ".jpg");
+				if (!picFile.exists()) {
+					try {
+						picFile.createNewFile();
+						cameraOperationHelper.takePicture(picFile.getAbsolutePath());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		} else if (v.getId() == R.id.btn_flash) {
@@ -338,11 +403,19 @@ public class CameraPreviewActivity extends Activity implements Callback, OnClick
 	}
 
 	@Override
-	public void cameraPhotoTaken(String path) {
+	public void cameraPhotoTaken(String path,int cameraId) {
+		this.mCameraId = cameraId;
 		soundPool.play(1,1, 1, 0, 0,  1f);
 		cameraOperationHelper.doStopPreview();
-		Intent intent = new Intent(CameraPreviewActivity.this,PreviewActivity.class);
+		Bitmap bitmap = BitmapUtil.convertViewToBitmap(mLinearFloatingImage);
+		File saveFile = new File(new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH),Configuration.MIAOPAI_TEMP_PATH);
+		String fileName = StringUtils.formatDate(new Date(), "yyyyMMddhhmmss")+".jpg";
+		File picSaveFile = new File(saveFile,fileName);
+		BitmapUtil.saveBitmap(bitmap, picSaveFile.getAbsolutePath());
+		Intent intent = new Intent(CameraPreviewActivity.this,PicturePreviewActivity.class);
 		intent.putExtra(PICPATH, path);
+		intent.putExtra(DECORATION, picSaveFile.getAbsolutePath());
+		intent.putExtra(CAMERA_ID, cameraId);
 		startActivity(intent);
 	}
 

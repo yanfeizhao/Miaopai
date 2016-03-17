@@ -4,87 +4,101 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <RelativeLayout
+    <FrameLayout
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="@dimen/height_top"
+        android:gravity="center_vertical" >
 
         <ImageView
             android:id="@+id/img_take_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="24dp"
-            android:layout_marginTop="14dp"
-            android:src="@drawable/take_photo" />
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="@dimen/margin_right_takephoto"
+            android:src="@drawable/take_photo"
+            android:padding="5dp" />
 
         <ImageView
             android:id="@+id/img_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginTop="13dp"
-            android:src="@drawable/back_btn" />
+            android:layout_gravity="left|center_vertical"
+            android:src="@drawable/back_btn" 
+             android:padding="10dp"/>
 
         <TextView
             android:id="@+id/tv_toptitle"
             style="@style/share_title_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="39dp"
-            android:text="@string/share_to_friends" />
+            android:layout_gravity="center"
+            android:text="@string/share_to_friends" 
+            android:visibility="visible"/>
 
         <LinearLayout
             android:id="@+id/ll_five_appicon"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_height="@dimen/height_top"
+            android:layout_marginLeft="@dimen/margin_left_smallicon"
+            android:layout_marginRight="@dimen/margin_right_smallicon"
             android:orientation="horizontal"
-            >
-
+            android:layout_gravity="center_horizontal" >
 
             <ImageView
                 android:id="@+id/img_weichat_small"
+                style="@style/share_smallapp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/wechat_small"
-                android:visibility="gone"  />
+                android:visibility="gone"
+                android:layout_weight="1"
+                 />
 
             <ImageView
                 android:id="@+id/img_friends_small"
+                style="@style/share_smallapp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/friends_small" 
-                android:visibility="gone" />
+                android:src="@drawable/friends_small"
+                android:visibility="gone"
+                 android:layout_weight="1"
+                />
 
             <ImageView
                 android:id="@+id/img_weibo_small"
+                style="@style/share_smallapp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/weibo_small"
-                android:visibility="gone"  />
+                android:visibility="gone"
+                 android:layout_weight="1"
+                />
 
             <ImageView
                 android:id="@+id/img_qq_small"
+                style="@style/share_smallapp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/qq_small" 
-                android:visibility="gone" />
+                android:src="@drawable/qq_small"
+                android:visibility="gone"
+                 android:layout_weight="1"
+                />
 
             <ImageView
                 android:id="@+id/img_qq_zone_small"
+                style="@style/share_smallapp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/qq_zone_small"
-                android:visibility="gone"  />
+                android:visibility="gone"
+                 android:layout_weight="1"
+                 />
         </LinearLayout>
-    </RelativeLayout>
-
-    <!-- 还需要把下面的那个LinearLayout 和textView 抽出来，作为瀑布流的头部。 -->
+    </FrameLayout>
 
 
     <!-- 接下来显示一个瀑布流 -->
-
     <com.qst.fly.widget.WaterfallListView
         xmlns:pla="http://schemas.android.com/apk/res/com.qst.fly"
         android:id="@+id/lv_act_share"

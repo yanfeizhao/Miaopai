@@ -6,8 +6,8 @@
 
     <ImageView 
         android:id="@+id/img_launch"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:src="@drawable/launcher_page_text"
         android:layout_marginTop="@dimen/launch_top"

@@ -9,4 +9,7 @@
 	   
 	   
 	<color name="h_list_back">#22000000</color>
+	<color name="bg_image_show_item"> #EEEAEAEA</color>
+	<color name="text_pic_show_top">#ffd2d2d2</color>
+	<color name="common_yellow">#FFE000</color>
 </resources>
