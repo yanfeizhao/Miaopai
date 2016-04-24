@@ -16,16 +16,12 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-/**
-* @author smallzoo
-* @version
-* @date 2016年3月16日 上午10:44:14
-* 类说明
-*/
 public class CropFragment extends Fragment implements OnClickListener{
 
 	private View contentView;
+	/**标志位*/
 	private static final String TAG = "CropPhotoActivity";
+	/**裁剪的相片*/
 	public static final String CROPED_PHOTO = "CROPED_PHOTO";
 	private CropImageView mCropImage;
 	private Button mBtnConfirm;
@@ -40,12 +36,18 @@ public class CropFragment extends Fragment implements OnClickListener{
 		return contentView;
 	}
 	
+	/**
+	 * 初始化视图
+	 */
 	public void initView() {
 		mCropImage = (CropImageView)contentView.findViewById(R.id.img_tobe_crop);
 		mBtnConfirm = (Button)contentView.findViewById(R.id.btn_confirm);
 		mBtnConfirm.setOnClickListener(this);
 	}
 
+	/**
+	 * 获取相片
+	 */
 	public void getBitmap() {
 		PhotoUpImageItem mSelectPhoto = ((AlbumActivity)getActivity()).getPhotoUpImageItem();
 		BitmapDrawable drawable = new BitmapDrawable(BitmapFactory.decodeFile(mSelectPhoto.getImagePath()));

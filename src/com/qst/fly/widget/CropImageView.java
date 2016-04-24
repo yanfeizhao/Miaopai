@@ -250,7 +250,7 @@ public class CropImageView extends View {
 		mDrawable.draw(canvas);
         canvas.save();
         canvas.clipRect(mDrawableFloat, Region.Op.DIFFERENCE);
-        canvas.drawColor(Color.parseColor("#a0000000"));
+        canvas.drawColor(Color.parseColor("#44000000"));
         canvas.restore();
         mFloatDrawable.draw(canvas);
 	}

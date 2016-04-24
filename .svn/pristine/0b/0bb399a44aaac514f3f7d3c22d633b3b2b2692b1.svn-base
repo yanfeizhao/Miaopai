@@ -1,0 +1,441 @@
+package com.qst.fly.service;
+
+import java.io.File;
+
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.qst.fly.application.MiaoPaiApplication;
+import com.qst.fly.config.Configuration;
+import com.qst.fly.db.SqliteHelper;
+import com.qst.fly.entity.Picture;
+import com.qst.fly.entity.Theme;
+import com.qst.fly.utils.BitmapUtil;
+import com.qst.fly.utils.JsonUtils;
+import com.qst.fly.utils.LogUtils;
+import com.qst.fly.utils.NetUtil;
+import com.qst.fly.utils.OkHttpUtils;
+import com.qst.fly.utils.SharedPreferenceUtil;
+import com.qst.fly.utils.OkHttpUtils.ResultCallback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+import com.squareup.picasso.Picasso.LoadedFrom;
+
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Binder;
+import android.os.Environment;
+import android.os.IBinder;
+import android.util.Log;
+
+/**
+* @author smallzoo
+* @version
+* @date 2016年3月17日 下午2:55:55
+* 类说明
+*/
+public class FetchPictureService extends Service {
+	
+	
+	private static final String TAG = "FetchPictureService";
+	private List<Picture> mPictures;
+	private SqliteHelper mSqliteHelper;
+	private OnDataLoadFinishListener mOnDataLoadFinishListener;
+	
+	private static final String IS_FIRST_ENTER = "isFristEnter";
+	private static final String IS_FIRST_ENTER_TAG = "isFristEnterTag";
+
+	@Override
+	public IBinder onBind(Intent arg0) {
+		LogUtils.d(TAG, "onBind");
+		return new FetchPictureBinder();
+	}
+
+	@Override
+	public void onCreate() {
+		LogUtils.d(TAG, "onCreate");
+		mPictures = new ArrayList<Picture>();
+		mSqliteHelper = new SqliteHelper(this,Configuration.DB_NAME, null, 1);
+		super.onCreate();
+	}
+
+	@Override
+	public void onRebind(Intent intent) {
+		LogUtils.d(TAG, "onReBind");
+		super.onRebind(intent);
+	}
+
+	
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		new DownLoadPictureTask().execute();
+		return super.onStartCommand(intent, flags, startId);
+	}
+	
+	
+
+	/**
+	 * 从数据库中查询图片
+	 */
+	private void loadPicturesFromDb() {
+		mPictures.clear();
+		mPictures.addAll(mSqliteHelper.getAllPictures());
+	}
+
+	public class FetchPictureBinder extends Binder{
+		public void SetOnDataLoadFinishListener(OnDataLoadFinishListener onDataLoadFinishListener){
+			mOnDataLoadFinishListener = onDataLoadFinishListener;
+		}
+		
+		//TODO Activity操纵service继续进行其他操作
+		//TODO 根据category获取先要的数据
+		public List<Picture> getPictureData(int category){
+			return filterPictuires(category);
+		}
+	}
+	
+	/**
+	 * 过滤出想要的类别的picture
+	 * @param category
+	 * @return
+	 */
+	public List<Picture> filterPictuires(int category){
+		List<Picture> filterPictures = new ArrayList<Picture>();
+		for(Picture p : this.mPictures){
+			if(p.category == category){
+				filterPictures.add(p);
+			}
+		}
+		return filterPictures;
+	}
+	
+	/**
+	 * 判断是否是第一次进入app
+	 * @return
+	 */
+	private boolean isFirstOpen() {
+		if(MiaoPaiApplication.getApplication().getIsFirstOpen() == -1){
+			//为检查，去检查
+			SharedPreferenceUtil.setSharedPreferenceName(IS_FIRST_ENTER);
+			boolean first = SharedPreferenceUtil.getBoolean(this, IS_FIRST_ENTER_TAG, true);
+			SharedPreferenceUtil.addInSharePreference(this, IS_FIRST_ENTER_TAG, false);
+			MiaoPaiApplication.getApplication().setIsFirstEnter(first);
+			return first;
+		}else if(MiaoPaiApplication.getApplication().getIsFirstOpen() == 0){
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
+	public interface OnDataLoadFinishListener{
+		void onFinishLoad();
+		void onPictureUpdate(Picture picture);
+	}
+	
+	
+	public class DownLoadPictureTask extends AsyncTask<Void, Integer, Void>{
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			if(mOnDataLoadFinishListener != null){
+				mOnDataLoadFinishListener.onFinishLoad();				
+			}
+		}
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			if(isFirstOpen()){
+				File animalFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH+"/01");
+				copyFilesFassets(FetchPictureService.this, "01", animalFile.getAbsolutePath());
+				
+				File emojiFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH+"/02");
+				copyFilesFassets(FetchPictureService.this, "02", emojiFile.getAbsolutePath());
+				
+				File baozouFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH+"/03");
+				copyFilesFassets(FetchPictureService.this, "03", baozouFile.getAbsolutePath());
+				
+				File personFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH+"/04");
+				copyFilesFassets(FetchPictureService.this, "04", personFile.getAbsolutePath());
+				//将本地的图片添加到数据库
+				addLocalPictureToDb();	
+			}
+			loadPicturesFromDb();
+			if(NetUtil.isNetConnected(FetchPictureService.this)){	
+				loadNetPicture();
+			}		
+			return null;
+		}
+	}
+	
+	/**
+	 * 加载网络图片到数据库
+	 */
+	private void loadNetPicture() {
+		OkHttpUtils.get(Configuration.BASE_THEME_PIC_URL+"01", new ResultCallback<String>() {
+			@Override
+			public void onSuccess(String response) {
+				Theme theme = JsonUtils.deserialize(response, Theme.class);
+				for(final Picture pic : theme.result){
+					pic.category = 1;
+					Picasso.with(FetchPictureService.this).load(pic.img).into(new Target() {
+						
+						@Override
+						public void onPrepareLoad(Drawable arg0) {
+								
+						}
+						
+						@Override
+						public void onBitmapLoaded(Bitmap arg0, LoadedFrom arg1) {
+							Log.d(TAG, "category01 add");
+							String path = saveBitmap2Disk(arg0, pic,"01");
+							pic.img = path;
+							mSqliteHelper.addPicture(pic);
+							if(mOnDataLoadFinishListener != null){
+								mOnDataLoadFinishListener.onPictureUpdate(pic);								
+							}
+						}
+						
+						@Override
+						public void onBitmapFailed(Drawable arg0) {
+							
+						}
+					});
+				}
+			}
+
+			@Override
+			public void onFailure(Exception e) {
+				
+			}
+		});
+		OkHttpUtils.get(Configuration.BASE_THEME_PIC_URL+"02", new ResultCallback<String>() {
+
+			@Override
+			public void onSuccess(String response) {
+				Theme theme = JsonUtils.deserialize(response, Theme.class);
+				for(final Picture pic : theme.result){
+					pic.category = 2;
+					Picasso.with(FetchPictureService.this).load(pic.img).into(new Target() {
+						
+						@Override
+						public void onPrepareLoad(Drawable arg0) {
+								
+						}
+						
+						@Override
+						public void onBitmapLoaded(Bitmap arg0, LoadedFrom arg1) {
+							String path = saveBitmap2Disk(arg0, pic,"02");
+							pic.img = path;
+							mSqliteHelper.addPicture(pic);
+						}
+						
+						@Override
+						public void onBitmapFailed(Drawable arg0) {
+							
+						}
+					});
+				}
+			}
+
+			@Override
+			public void onFailure(Exception e) {
+				
+			}
+		});
+		OkHttpUtils.get(Configuration.BASE_THEME_PIC_URL+"03", new ResultCallback<String>() {
+
+			@Override
+			public void onSuccess(String response) {
+				Theme theme = JsonUtils.deserialize(response, Theme.class);
+				for(final Picture pic : theme.result){
+					pic.category = 3;
+					Picasso.with(FetchPictureService.this).load(pic.img).into(new Target() {
+						
+						@Override
+						public void onPrepareLoad(Drawable arg0) {
+								
+						}
+						
+						@Override
+						public void onBitmapLoaded(Bitmap arg0, LoadedFrom arg1) {
+							String path = saveBitmap2Disk(arg0, pic,"03");
+							pic.img = path;
+							mSqliteHelper.addPicture(pic);
+						}
+						
+						@Override
+						public void onBitmapFailed(Drawable arg0) {
+							
+						}
+					});
+				}
+			}
+
+			@Override
+			public void onFailure(Exception e) {
+				
+			}
+		});
+		OkHttpUtils.get(Configuration.BASE_THEME_PIC_URL+"04", new ResultCallback<String>() {
+
+			@Override
+			public void onSuccess(String response) {
+				Theme theme = JsonUtils.deserialize(response, Theme.class);
+				for(final Picture pic : theme.result){
+					pic.category = 4;
+					Log.d(TAG, "start Load"+pic.title);
+					Picasso.with(FetchPictureService.this).load(pic.img).into(new Target() {
+						
+						@Override
+						public void onPrepareLoad(Drawable arg0) {
+								
+						}
+						
+						@Override
+						public void onBitmapLoaded(Bitmap arg0, LoadedFrom arg1) {
+							String path = saveBitmap2Disk(arg0, pic,"04");
+							pic.img = path;
+							mSqliteHelper.addPicture(pic);
+							Log.d(TAG, "complete Load"+pic.title);
+						}
+						
+						@Override
+						public void onBitmapFailed(Drawable arg0) {
+							
+						}
+					});
+				}
+			}
+
+			@Override
+			public void onFailure(Exception e) {
+				
+			}
+		});
+	}
+	/**
+	 * 将bitmap存至sd
+	 * @param bitmap
+	 * @param item
+	 * @param category
+	 * @return
+	 */
+	private String saveBitmap2Disk(Bitmap bitmap, Picture item,String category) {
+		String fileName = getFileName(item.img);
+		File saveFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH+"/"+category);
+		if(!saveFile.exists()){
+			saveFile.mkdirs();
+		}
+		File pictureSaved = new File(saveFile,fileName);
+		BitmapUtil.saveBitmap(bitmap, pictureSaved.getAbsolutePath());
+		return pictureSaved.getAbsolutePath();
+	}
+	
+	private Bitmap getBitmapFromDisk(Picture pcPicture){
+		String fileName = getFileName(pcPicture.img);
+		File saveFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH);
+		File pictureSaved = new File(saveFile,fileName);
+		if(pictureSaved.exists()){
+			return BitmapFactory.decodeFile(pictureSaved.getAbsolutePath());
+		}else{
+			return null;
+		}
+	}
+	private boolean isBitmapExitsDisk(Picture pcPicture){
+		String fileName = getFileName(pcPicture.img);
+		File saveFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH);
+		File pictureSaved = new File(saveFile,fileName);
+		return pictureSaved.exists();
+	}
+	private String getFileName(String url){
+		String[] strs = url.replace("http://", "").split("/");
+		for(int i = 0;i<strs.length;i++){
+			System.out.println(strs[i]);
+		}
+		return strs[strs.length-1];
+	}
+	
+	/**
+	 * 
+	 */
+	private void addLocalPictureToDb() {
+		File animalFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH+"/01");
+		File[] animals = animalFile.listFiles();
+		for(int i = 0;i<animals.length;i++){
+			File singleFile = animals[i];
+			String title = Configuration.animalTitleMaps.get(singleFile.getName());
+			Picture picture = new Picture(1,singleFile.getAbsolutePath(),title);
+			mSqliteHelper.addPicture(picture);
+		}
+		//TODO 等到其他类别的本地图片也加入以后，也加入 数据库
+		File emojiFiles = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH+"/02");
+		File[] emojis = emojiFiles.listFiles();
+		for(int i = 0;i<emojis.length;i++){
+			File singleFile = emojis[i];
+			String title = Configuration.emojiTitleMaps.get(singleFile.getName());
+			Picture picture = new Picture(2,singleFile.getAbsolutePath(),title);
+			mSqliteHelper.addPicture(picture);
+		}
+		
+		File baozouFiles = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH+"/03");
+		File[] baozous = baozouFiles.listFiles();
+		for(int i = 0;i<baozous.length;i++){
+			File singleFile = baozous[i];
+			String title = Configuration.baozouTitleMaps.get(singleFile.getName());
+			Picture picture = new Picture(3,singleFile.getAbsolutePath(),title);
+			mSqliteHelper.addPicture(picture);
+		}
+		
+		File personFiles = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH+"/04");
+		File[] persons = personFiles.listFiles();
+		for(int i = 0;i<persons.length;i++){
+			File singleFile = persons[i];
+			String title = Configuration.personTitleMaps.get(singleFile.getName());
+			Picture picture = new Picture(4,singleFile.getAbsolutePath(),title);
+			mSqliteHelper.addPicture(picture);
+		}
+	}
+	
+	/**  
+	 *  从assets目录中复制整个文件夹内容  
+	 *  @param  context  Context 使用CopyFiles类的Activity 
+	 *  @param  oldPath  String  原文件路径  如：/aa  
+	 *  @param  newPath  String  复制后路径  如：xx:/bb/cc  
+	 */ 
+	public void copyFilesFassets(Context context,String oldPath,String newPath) {                      
+        try {  
+       String fileNames[] = context.getAssets().list(oldPath);//获取assets目录下的所有文件及目录名  
+       if (fileNames.length > 0) {//如果是目录  
+           File file = new File(newPath);  
+           file.mkdirs();//如果文件夹不存在，则递归  
+           for (String fileName : fileNames) {  
+              copyFilesFassets(context,oldPath + "/" + fileName,newPath+"/"+fileName);  
+           }  
+       } else {//如果是文件  
+           InputStream is = context.getAssets().open(oldPath);  
+           FileOutputStream fos = new FileOutputStream(new File(newPath));  
+           byte[] buffer = new byte[1024];  
+           int byteCount=0;                 
+           while((byteCount=is.read(buffer))!=-1) {//循环从输入流读取 buffer字节          
+               fos.write(buffer, 0, byteCount);//将读取的输入流写入到输出流  
+           }  
+           fos.flush();//刷新缓冲区  
+           is.close();  
+           fos.close();  
+       }  
+   } catch (Exception e) {  
+       e.printStackTrace();  
+     
+   }                             
+}  
+}

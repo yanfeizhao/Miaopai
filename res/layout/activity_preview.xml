@@ -7,8 +7,7 @@
     <ImageView
         android:id="@+id/img_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#44ff0000" />
+        android:layout_height="match_parent"/>
 
     <ImageView
         android:id="@+id/btn_retake"
@@ -18,7 +17,10 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="@dimen/retake_margin_left"
         android:layout_marginTop="@dimen/retake_margin_top"
-        android:src="@drawable/rephotograph" />
+        android:paddingLeft="5dp"
+        android:paddingBottom="10dp"
+        android:paddingRight="10dp"
+        android:src="@drawable/close_cp" />
 
     <ImageView
         android:id="@+id/btn_share"
@@ -28,17 +30,12 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="@dimen/share_margin_right"
         android:layout_marginTop="@dimen/share_margin_top"
-        android:src="@drawable/share"
+        android:src="@drawable/btn_save"
         />
-
-    <ImageView
-        android:id="@+id/btn_save"
+    <ProgressBar 
+        android:id="@+id/pb_saving"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="@dimen/save_margin_right"
-        android:layout_marginTop="@dimen/save_margin_top"
-        android:layout_toLeftOf="@id/btn_share"
-        android:src="@drawable/download" />
-
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
 </RelativeLayout>

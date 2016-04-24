@@ -24,4 +24,32 @@
     
     <string name="choosealbum">选择相册</string>
     <string name="choosephoto">选择照片</string>
+    <string name="wechatfail">微信分享失败</string>
+    <string name="wechatsuccess">微信分享成功</string>
+    <string name="wechatcancel">微信分享取消</string>
+    <string name="wechatmomentfail">朋友圈分享失败</string>
+    <string name="wechatmomentsuccess">朋友圈分享成功</string>
+    <string name="wechatmomentcancel">朋友圈分享取消</string>
+    <string name="weibofail">微博分享失败</string>
+    <string name="weibosuccess">微博分享成功</string>
+    <string name="weibocancel">微博分享取消</string>
+    <string name="qqfail">QQ分享失败</string>
+    <string name="qqsuccess">QQ分享成功</string>
+    <string name="qqcancel">QQ分享取消</string>
+    <string name="qqzonefail">QQ空间分享失败</string>
+    <string name="qqzonesuccess">QQ空间分享成功</string>
+    <string name="qqzonecancel">QQ空间分享取消</string>
+    <string name="content">#喵拍#</string>
+    <string name="sharetitle">看看我的照片</string>
+    <string name="find_picture">选择图片开始模仿吧~</string>
+    <string name="touch_screen_take">点击屏幕拍摄照片</string>
+    <string name="finish_saved">已保存到相册</string>
+    
+    
+    <!-- 菜单界面string -->
+    <string name="album">相册</string>
+    <string name="yanyi">颜艺</string>
+    <string name="super_star">巨星</string>
+    <string name="cartoon">卡通</string>
+    <string name="animal">萌宠</string>
 </resources>

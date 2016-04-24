@@ -1,0 +1,454 @@
+package com.qst.fly.activity;
+
+import java.io.File;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import com.meetme.android.horizontallistview.HorizontalListView;
+import com.qst.fly.R;
+import com.qst.fly.adapter.PictureSelectListAdapter;
+import com.qst.fly.application.MiaoPaiApplication;
+import com.qst.fly.config.Configuration;
+import com.qst.fly.entity.Picture;
+import com.qst.fly.entity.Theme;
+import com.qst.fly.service.FetchPictureService;
+import com.qst.fly.service.FetchPictureService.FetchPictureBinder;
+import com.qst.fly.service.FetchPictureService.OnDataLoadFinishListener;
+import com.qst.fly.utils.BitmapUtil;
+import com.qst.fly.utils.CameraOperationHelper;
+import com.qst.fly.utils.CameraOperationHelper.CameraOverCallback;
+import com.qst.fly.utils.JsonUtils;
+import com.qst.fly.utils.LogUtils;
+import com.qst.fly.utils.OkHttpUtils;
+import com.qst.fly.utils.OkHttpUtils.ResultCallback;
+import com.qst.fly.utils.SharedPreferenceUtil;
+import com.qst.fly.utils.StringUtils;
+
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.app.Service;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.IBinder;
+import android.util.Log;
+import android.view.SurfaceHolder;
+import android.view.SurfaceHolder.Callback;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.TextView;
+/**
+* @author NoahZu
+* @version
+*/
+public class CameraPreviewActivity extends BaseActivity implements Callback, OnClickListener, CameraOverCallback,OnDataLoadFinishListener {
+
+	private static final String CAMERA_PATH = "cameraDemos";
+	private static final String TAG = "MainActivity";
+	public static final String PICPATH = "picturePath";
+	public static final int STATUS_SELECT_THEME = 0;
+	public static final int STATUS_TAKE_PHOTO = 1;
+	public static final String DECORATION = "decoration";
+	public static final String CAMERA_ID = "cameraId";
+	private static final int REQUEST_PHOTO_ALBUM = 5;
+	private static final int REQUEST_CROP_PHOTO = 8;
+	
+	public static final int THEME_TYPE_ANIMAL = 1;
+	public static final int THEME_TYPE_EMOJI = 2;
+	public static final int THEME_TYPE_BAOZOU = 3;
+	public static final int THEME_TYPE_PERSON = 4;
+	private static final String IS_FIRST_ENTER = "isFristEnter";
+	private static final String IS_FIRST_ENTER_TAG = "isFristEnterTag";
+	
+	private int currentType = THEME_TYPE_ANIMAL;
+	
+	public static String FROM = "from";
+	public static String FROM_LAUNCH = "FLAG_FROM_LAUNCH";
+	public static String FROM_PREVIEW = "FROM_PREVIEW";
+	
+	private int currentStatus = STATUS_SELECT_THEME;
+
+	private HorizontalListView mHorizontalListView;
+
+	private List<Picture> mCurrentPictures;//当前显示的数据源
+	
+	//TODO 是否应该创建多个 adapter 答案是否！！！
+	private PictureSelectListAdapter mPictureAdapter;
+	
+	private ImageButton switchCameraBtn;
+	private ImageButton flashBtn;
+	private SurfaceView disCameraSurface;
+	private RadioGroup mMenuRadio;
+	
+	private LinearLayout mLinearFloatingImage;
+	private LinearLayout mLinearFloatingMenu;
+	private ImageView mImageFloatImage;
+	private TextView mTextFloatImage;
+	
+	private SurfaceHolder disCameraSurfaceHolder;
+	private CameraOperationHelper cameraOperationHelper;
+
+	private SoundPool soundPool;
+	private boolean isFlashing = false;
+	private boolean isFront = true;
+	private FetchPictureService.FetchPictureBinder mFetchServiceBinder;
+	
+	private ServiceConnection serviceConnection =new ServiceConnection() {
+		
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			LogUtils.d(TAG, "onServiceDisconnected");
+		}
+		
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			LogUtils.d(TAG, "onServiceConnected");
+			mFetchServiceBinder = (FetchPictureBinder) service;
+			mFetchServiceBinder.SetOnDataLoadFinishListener(CameraPreviewActivity.this);
+			loadData(THEME_TYPE_ANIMAL);
+		}
+	};
+	
+	private boolean mLoadPictureFromAlbum = false;
+
+	
+	private int mCameraId = CameraOperationHelper.FRONT_CAMERA;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.activity_camera);
+
+		//TODO 先检查一下是从哪个页面跳转过来的
+		bindService();
+		initSound();
+		initCamera();
+		initView();
+		initData();
+		if(isFirstOpen()){
+			showToast("点击图片开始模仿吧",false,false);
+		}
+	}
+	
+	private void bindService() {
+		Intent intent = new Intent(CameraPreviewActivity.this,FetchPictureService.class);
+		boolean b = bindService(intent, serviceConnection, Service.BIND_AUTO_CREATE);
+	}
+	
+
+	@Override
+	public void onFinishLoad() {
+		//更新数据的回调
+		loadData(currentType);
+	}
+	/**
+	 * 图片更新的回调
+	 */
+	@Override
+	public void onPictureUpdate(Picture picture) {
+		
+	}
+	
+	private void loadData(final int themeType){ 
+		if(mFetchServiceBinder != null){
+			currentType = themeType;
+			mCurrentPictures.clear();
+			mCurrentPictures.addAll(mFetchServiceBinder.getPictureData(themeType));
+			mPictureAdapter.notifyDataSetChanged();			
+		}
+	}
+
+	private boolean isFirstOpen() {
+		if(MiaoPaiApplication.getApplication().getIsFirstOpen() == -1){
+			//为检查，去检查
+			SharedPreferenceUtil.setSharedPreferenceName(IS_FIRST_ENTER);
+			boolean first = SharedPreferenceUtil.getBoolean(this, IS_FIRST_ENTER_TAG, true);
+			SharedPreferenceUtil.addInSharePreference(this, IS_FIRST_ENTER_TAG, false);
+			MiaoPaiApplication.getApplication().setIsFirstEnter(first);
+			return first;
+		}else if(MiaoPaiApplication.getApplication().getIsFirstOpen() == 0){
+			return false;
+		}else{
+			return true;
+		}
+	}
+
+	/**
+	 * 底部菜单移上来
+	 */
+	private void floatingMoveUp(){
+		ObjectAnimator moveUpAnimator = ObjectAnimator.ofFloat(mLinearFloatingMenu, "translationY", 0);
+		ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(mLinearFloatingMenu, "alpha", 0.5f,1f);
+		AnimatorSet animatorSet = new AnimatorSet();
+		animatorSet.play(moveUpAnimator).with(alphaAnimator);
+		animatorSet.setDuration(1000);
+		animatorSet.start();
+		currentStatus = STATUS_SELECT_THEME;
+	}
+	/**
+	 * 底部菜单移下去
+	 */
+	private void floatingMoveDown(){
+		ObjectAnimator moveDownAnimator = ObjectAnimator.ofFloat(mLinearFloatingMenu, "translationY", 0f,(mLinearFloatingMenu.getHeight()*2)/3);
+		ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(mLinearFloatingMenu, "alpha", 1f,0.5f);
+		AnimatorSet animatorSet = new AnimatorSet();
+		animatorSet.play(moveDownAnimator).with(alphaAnimator);
+		animatorSet.setDuration(1000);
+		animatorSet.start();
+		currentStatus = STATUS_TAKE_PHOTO;
+	}
+	/**
+	 * 初始化声音
+	 */
+	private void initSound() {
+		soundPool= new SoundPool(21,AudioManager.STREAM_SYSTEM,10);
+		soundPool.load(this,R.raw.take_photo,1);
+	}
+	/**
+	 * 初始化Camera
+	 */
+	private void initCamera() {
+		cameraOperationHelper = CameraOperationHelper.getInstance();
+	}
+
+	/**
+	 * 初始化View
+	 */
+	private void initView() {
+		mLinearFloatingMenu = (LinearLayout) findViewById(R.id.ll_select_theme);
+		mLinearFloatingImage = (LinearLayout) findViewById(R.id.ll_float_select_item);
+		mImageFloatImage = (ImageView) findViewById(R.id.img_float_item);
+		mTextFloatImage = (TextView) findViewById(R.id.text_float_item);
+		
+		mMenuRadio = (RadioGroup) findViewById(R.id.rg_menu);
+		mMenuRadio.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				((RadioButton)group.findViewById(checkedId)).setChecked(true);
+				if(checkedId == R.id.album){
+					openAlbum();
+					mMenuRadio.check(R.id.animal);
+				}
+				if(checkedId == R.id.animal){
+					loadData(THEME_TYPE_ANIMAL);
+				}
+				if(checkedId == R.id.emoji){
+					loadData(THEME_TYPE_EMOJI);
+				}
+				if(checkedId == R.id.baozou){
+					loadData(THEME_TYPE_BAOZOU);
+				}
+				if(checkedId == R.id.person){
+					loadData(THEME_TYPE_PERSON);
+				}
+			}
+		});
+		switchCameraBtn = (ImageButton) findViewById(R.id.btn_switch);
+		flashBtn = (ImageButton) findViewById(R.id.btn_flash);
+		mHorizontalListView = (HorizontalListView) findViewById(R.id.h_lv_picture);
+		
+		switchCameraBtn.setOnClickListener(this);
+		flashBtn.setOnClickListener(this);
+
+		disCameraSurface = (SurfaceView) findViewById(R.id.sf_dis_camera);
+		disCameraSurface.setOnClickListener(this);
+		disCameraSurfaceHolder = disCameraSurface.getHolder();
+		disCameraSurfaceHolder.addCallback(this);
+		disCameraSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+	}
+
+	/**
+	 * 初始化数据
+	 */
+	private void initData() {
+		mCurrentPictures = new ArrayList<Picture>();
+		//初始化当前显示的数据源
+		mPictureAdapter = new PictureSelectListAdapter(this, mCurrentPictures, R.layout.item_select_picture);
+		
+		
+		mHorizontalListView.setAdapter(mPictureAdapter);
+		mHorizontalListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
+				if(currentStatus == STATUS_TAKE_PHOTO){
+					mLinearFloatingImage.setVisibility(View.INVISIBLE);
+					floatingMoveUp();
+				}else{
+					floatingMoveDown();
+					//TODO 替换成具体的图片
+					mLinearFloatingImage.setVisibility(View.VISIBLE);
+					Picture picture = mCurrentPictures.get(position);
+					Drawable drawable = ((ImageView)view.findViewById(R.id.img_item_pic)).getDrawable();
+					BitmapDrawable bitmapDrawable = ((BitmapDrawable) drawable);
+					Bitmap bitmap = bitmapDrawable .getBitmap();
+					mImageFloatImage.setImageBitmap(bitmap);
+					mTextFloatImage.setText(picture.title);
+				}
+			}
+		});
+	}
+	
+	
+	
+	/**
+	 * 打开相册	
+	 */
+	private void openAlbum() {
+		Intent intent = new Intent(CameraPreviewActivity.this,AlbumActivity.class);
+		startActivityForResult(intent,REQUEST_PHOTO_ALBUM);
+	}
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(resultCode == RESULT_OK && requestCode == REQUEST_PHOTO_ALBUM){
+			Bitmap bitmap = data.getParcelableExtra(AlbumActivity.CROPED_PHOTO);
+			mLinearFloatingImage.setVisibility(View.VISIBLE);
+			mImageFloatImage.setImageBitmap(bitmap);
+			floatingMoveDown();
+		}
+		
+	}
+	
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+		cameraOperationHelper.surfaceChanged();
+	}
+
+	@Override
+	public void surfaceCreated(SurfaceHolder holder) {
+		Log.d(TAG, "surfaceCreated");
+		cameraOperationHelper.doOpenCamera(mCameraId, this, holder);
+		cameraOperationHelper.doStartPreview();
+	}
+
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		cameraOperationHelper.destroyCamera();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();	
+	}
+
+	@Override
+	public void onClick(View v) {
+		if (v.getId() == R.id.btn_switch) {
+			ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(switchCameraBtn, "rotationY", 0f, 180f);
+			objectAnimator.setDuration(700);
+			objectAnimator.addListener(new AnimatorListener() {
+				@Override
+				public void onAnimationStart(Animator animation) {
+					
+				}
+				
+				@Override
+				public void onAnimationRepeat(Animator animation) {
+					
+				}
+				
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					switchCameraBtn.setRotationX(0f);
+					if (isFront) {
+						switchCameraBtn.setSelected(true);
+						cameraOperationHelper.changeCamera(CameraOperationHelper.BACK_CAMERA); 
+						isFront = false;
+					} else {
+						switchCameraBtn.setSelected(false);
+						cameraOperationHelper.changeCamera(CameraOperationHelper.FRONT_CAMERA); 
+						isFront = true;
+					}
+				
+				}
+				
+				@Override
+				public void onAnimationCancel(Animator animation) {
+					
+				}
+			});
+			objectAnimator.start();
+			
+		} else if (v.getId() == R.id.sf_dis_camera) {
+			//TODO 判断状态
+			if(currentStatus == STATUS_TAKE_PHOTO){
+				File file = new File(Environment.getExternalStorageDirectory(), CAMERA_PATH);
+				if (!file.exists()) {
+					file.mkdir();
+				}
+				File picFile = new File(file, StringUtils.formatDate(new Date(), "yyyyMMddHHmmss") + ".jpg");
+				if (!picFile.exists()) {
+					try {
+						picFile.createNewFile();
+						cameraOperationHelper.takePicture(picFile.getAbsolutePath());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		} else if (v.getId() == R.id.btn_flash) {
+			if(!isFlashing){
+				flashBtn.setSelected(true);
+				cameraOperationHelper.openFlashMode();
+				isFlashing = true;
+			}else{
+				flashBtn.setSelected(false);
+				cameraOperationHelper.closeFlashMode();
+				isFlashing = false;
+			}
+		}
+	}
+
+	@Override
+	public void cameraFlashModeChanged(int flashMode) {
+
+	}
+
+	@Override
+	public void cameraFacingChanged(boolean hasFaceCamera, int cameraId) {
+
+	}
+
+	@Override
+	public void cameraPhotoTaken(String path,int cameraId) {
+		this.mCameraId = cameraId;
+		soundPool.play(1,1, 1, 0, 0,  1f);
+		cameraOperationHelper.doStopPreview();
+		Bitmap bitmap = BitmapUtil.convertViewToBitmap(mLinearFloatingImage);
+		File saveFile = new File(new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH),Configuration.MIAOPAI_TEMP_PATH);
+		String fileName = StringUtils.formatDate(new Date(), "yyyyMMddhhmmss")+".jpg";
+		File picSaveFile = new File(saveFile,fileName);
+		BitmapUtil.saveBitmap(bitmap, picSaveFile.getAbsolutePath());
+		Intent intent = new Intent(CameraPreviewActivity.this,PicturePreviewActivity.class);
+		intent.putExtra(PICPATH, path);
+		intent.putExtra(DECORATION, picSaveFile.getAbsolutePath());
+		intent.putExtra(CAMERA_ID, cameraId);
+		startActivity(intent);
+	}
+
+	
+}

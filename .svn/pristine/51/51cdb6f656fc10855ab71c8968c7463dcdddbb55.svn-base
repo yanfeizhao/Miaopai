@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="55dp"
+    android:background="@drawable/shap_toast_save"
+    android:gravity="center" >
+
+    <TextView
+        android:text="保存成功"
+        android:id="@+id/toast_img_tv_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="19dp"
+        android:paddingLeft="81dp"
+        android:paddingRight="56dp"
+        android:paddingTop="19dp"
+        android:textColor="#2e2e2e"
+        android:textSize="17sp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="6dp"
+        android:src="@drawable/prompt_box_cat" />
+
+</RelativeLayout>

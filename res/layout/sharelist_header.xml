@@ -2,162 +2,220 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    >
-    
-    <LinearLayout
+    android:background="#ffffff"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/img_saved"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="50dp" 
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/sure_0001" 
+        android:layout_marginTop="30dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginBottom="50dp"
-        android:layout_gravity="center_horizontal">
+        android:text="已保存到相册"
+        android:textColor="@color/save"
+        android:textSize="20dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="23dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="2dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="11dp"
+            android:layout_weight="0.1"
+            android:background="#d2d2d2" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="分享给小伙伴们："
+            android:textColor="@color/save"
+            android:textSize="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="2dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="11dp"
+            android:layout_weight="0.1"
+            android:background="#d2d2d2" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:orientation="horizontal" >
 
         <LinearLayout
+            android:id="@+id/ll_wechat"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical" 
             android:layout_marginLeft="@dimen/margin_left_or_right_share"
             android:layout_marginRight="@dimen/margin_applogo_share"
+            android:layout_weight="1"
+            android:orientation="vertical"
             android:visibility="gone"
-            >
+             >
+
             <ImageView
                 android:id="@+id/img_wechat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/wechat" 
+                android:layout_gravity="center"
                 android:layout_marginBottom="@dimen/margin_logo_name_share"
-                android:visibility="gone"
-                />
+                android:src="@drawable/wechat" />
 
             <TextView
                 android:id="@+id/text_wechatname"
+                style="@style/share_app"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="@string/wechat"
-                style="@style/share_app"
-                  android:visibility="gone" />
+                android:textSize="@dimen/social_tool_text_size"
+                android:text="@string/wechat" />
         </LinearLayout>
-         <LinearLayout
+
+        <LinearLayout
+            android:id="@+id/ll_friends"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_applogo_share"
             android:layout_weight="1"
-            android:orientation="vertical"
-             android:layout_marginRight="@dimen/margin_applogo_share"
-              android:visibility="gone">
+            android:orientation="vertical" >
+
             <ImageView
                 android:id="@+id/img_friends"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/friends" 
+                android:layout_gravity="center"
                 android:layout_marginBottom="@dimen/margin_logo_name_share"
-                 android:visibility="gone"/>
+                android:src="@drawable/friends" />
 
             <TextView
+                android:id="@+id/text_friendsname"
+                style="@style/share_app"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="@string/friends"
-                 style="@style/share_app" 
-                   android:id="@+id/text_friendsname" 
-                     android:visibility="gone"/>
+                android:textSize="@dimen/social_tool_text_size"
+                android:text="@string/friends" />
         </LinearLayout>
-         <LinearLayout
+
+        <LinearLayout
+            android:id="@+id/ll_weibo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_applogo_share"
             android:layout_weight="1"
             android:orientation="vertical" 
-             android:layout_marginRight="@dimen/margin_applogo_share"
-              android:visibility="gone">
+            android:visibility="gone">
+
             <ImageView
                 android:id="@+id/img_weibo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/weibo" 
+                android:layout_gravity="center"
                 android:layout_marginBottom="@dimen/margin_logo_name_share"
-                 android:visibility="gone"
-                />
+                android:src="@drawable/weibo" />
 
             <TextView
+                android:id="@+id/text_weiboname"
+                style="@style/share_app"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/weibo"
-                 style="@style/share_app" 
-                  android:id="@+id/text_weiboname"
-                    android:visibility="gone" />
+                android:textSize="@dimen/social_tool_text_size" />
         </LinearLayout>
-         <LinearLayout
+
+        <LinearLayout
+            android:id="@+id/ll_qq"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_applogo_share"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginRight="@dimen/margin_applogo_share"
-            android:visibility="visible"
-             >
+            android:visibility="gone" >
+
             <ImageView
                 android:id="@+id/img_qq"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/qq" 
+                android:layout_gravity="center"
                 android:layout_marginBottom="@dimen/margin_logo_name_share"
-                />
+                android:src="@drawable/qq" />
 
             <TextView
+                android:id="@+id/text_qqname"
+                style="@style/share_app"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/qq"
-                 style="@style/share_app"
-                  android:id="@+id/text_qqname"  />
+                android:textSize="@dimen/social_tool_text_size" />
         </LinearLayout>
-         <LinearLayout
+
+        <LinearLayout
+            android:id="@+id/ll_qq_zone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_left_or_right_share"
             android:layout_weight="1"
             android:orientation="vertical" 
-            android:layout_marginRight="@dimen/margin_left_or_right_share"
             android:visibility="gone">
+
             <ImageView
                 android:id="@+id/img_qq_zone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/qq_zone"
+                android:layout_gravity="center"
                 android:layout_marginBottom="@dimen/margin_logo_name_share"
-                 android:visibility="gone" />
+                android:src="@drawable/qq_zone" />
 
             <TextView
+                android:id="@+id/text_qzonename"
+                style="@style/share_app"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/qqzone"
-                 style="@style/share_app" 
-                  android:id="@+id/text_qzonename"
-                    android:visibility="gone" />
+                android:textSize="@dimen/social_tool_text_size" />
         </LinearLayout>
     </LinearLayout>
-    
-    <TextView
+
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/star_show"
-        android:gravity="center"
-        android:layout_gravity="center_horizontal"
-        style="@style/share_title"
-        android:layout_marginBottom="@dimen/margin_bottom_subtitle"
-        />
-     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/text_pic_show_top"
-        />
-    
+        android:layout_height="30dp"
+        android:background="@color/bg_image_show_item" >
+
+        <TextView
+            style="@style/share_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/star_show"
+            android:layout_marginLeft="16dp" />
+    </LinearLayout>
 
 </LinearLayout>

@@ -1,13 +1,11 @@
 package com.qst.fly.activity;
 
-
-
-import com.qst.fly.R;
-
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
-import android.app.Activity;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -15,18 +13,65 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BaseActivity extends Activity {
+import com.qst.fly.R;
+
+public class BaseActivity extends FragmentActivity {
 
 	protected static final String TAG = "BaseActivity";
-
-	protected void showToast(String msg) {
+	
+	@Override
+	protected void onCreate(Bundle arg0) {
+		super.onCreate(arg0);
+		 ActivityController.addActivity(this);
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		ActivityController.removeActivity(this);
+	}
+	
+	
+	/**
+	 * 选择图片进行模仿toast
+	 */
+	protected void showViewFindToast(){
 		Toast toast = new Toast(this);
-		// FIXME 有了切图之后自行把TextView换成素材，可能要做成.9图
-		View view = LayoutInflater.from(this).inflate(R.layout.toast_img, null);
+		View view = LayoutInflater.from(this).inflate(R.layout.toast_viewfinder, null);
 		TextView tvMsg = (TextView) view.findViewById(R.id.toast_img_tv_msg);
-		tvMsg.setText(msg);
+		tvMsg.setText(R.string.find_picture);
 		toast.setView(view);
-		toast.setDuration(Toast.LENGTH_SHORT);
+		toast.setGravity(Gravity.CENTER, 0, 300);
+		toast.setDuration(Toast.LENGTH_LONG);
+		toast.show();
+	}
+	protected void showPromoteToast(){
+		Toast toast = new Toast(this);
+		View view = LayoutInflater.from(this).inflate(R.layout.toast_prompt, null);
+		TextView tvMsg = (TextView) view.findViewById(R.id.toast_img_tv_msg);
+		tvMsg.setText(R.string.touch_screen_take);
+		toast.setView(view);toast.setGravity(Gravity.CENTER, 0, -150);
+		toast.setDuration(Toast.LENGTH_LONG);
+		toast.show();
+	}
+	protected void showSaveToast(){
+		Toast toast = new Toast(this);
+		View view = LayoutInflater.from(this).inflate(R.layout.toast_save, null);
+		TextView tvMsg = (TextView) view.findViewById(R.id.toast_img_tv_msg);
+		tvMsg.setText(R.string.finish_saved);
+		toast.setView(view);
+		toast.setView(view);toast.setGravity(Gravity.CENTER, 0, -150);
+		toast.setDuration(Toast.LENGTH_LONG);
+		toast.show();
+		addAnimation();
+	}
+	
+	
+	
+	/**
+	 * 是否添加动画
+	 */
+	private void addAnimation() {
 		final Window window = getWindow();
 		ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1);
 		valueAnimator.setDuration(2500);
@@ -39,8 +84,8 @@ public class BaseActivity extends Activity {
 				float alpha = 0.5f;
 				if (input < d) {
 					alpha = 1 - input * (0.5f / d);
-				} else if (input > (1-d)) {
-					alpha = 0.5f + (input - (1-d)) * (0.5f / d);
+				} else if (input > (1 - d)) {
+					alpha = 0.5f + (input - (1 - d)) * (0.5f / d);
 				} else {
 					alpha = 0.5f;
 				}
@@ -52,7 +97,6 @@ public class BaseActivity extends Activity {
 		});
 
 		valueAnimator.start();
-		toast.show();
 	}
 
 }

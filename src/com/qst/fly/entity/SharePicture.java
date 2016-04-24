@@ -10,6 +10,11 @@ package com.qst.fly.entity;
 
 import java.util.List;
 
+/**
+ * 类的编写完全依据获得的json数据来的。
+ * @author lenovo
+ *
+ */
 public class SharePicture {
 
 	 private int status ;

@@ -7,12 +7,20 @@
     <uses-sdk
         android:minSdkVersion="17"
         android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
     
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
-	<uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-feature android:name="android.hardware.autofocus" />
+
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -27,37 +35,47 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    
+
     <application
+        android:name="com.qst.fly.application.MiaoPaiApplication"
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="56ed010ee0f55a6c23000020" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="Wandoujia" />
+
         <activity
             android:name="com.qst.fly.activity.CameraPreviewActivity"
             android:label="@string/app_name"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" >
         </activity>
-        <activity 
-            android:name="com.qst.fly.activity.PicturePreviewActivity"></activity>
-        <activity android:name="com.qst.fly.activity.CropPhotoActivity"></activity>
-    	<activity android:name="com.qst.fly.activity.LaunchActivity">
-    	    <intent-filter>
+        <activity android:name="com.qst.fly.activity.PicturePreviewActivity" >
+      
+        </activity>
+        <activity android:name="com.qst.fly.activity.CropPhotoActivity" >
+        </activity>
+        <activity android:name="com.qst.fly.activity.LaunchActivity" 
+            android:hardwareAccelerated="false">
+                <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-    	</activity>
-    	<activity android:name="com.qst.fly.activity.ShareActivity">
-    	   
-    	</activity>
-    	
-    	<activity android:name="com.qst.fly.activity.TestActivity">
-    	</activity>
-    	<activity android:name="com.qst.fly.activity.AlbumActivity"
-    	    android:launchMode="singleInstance"></activity>
-    	<activity android:name="com.qst.fly.activity.AlbumDetailActivity"></activity>
-    	
-    	<activity
+        </activity>
+        <activity android:name="com.qst.fly.activity.ShareActivity" >
+          
+        </activity>
+        <activity android:name="com.qst.fly.activity.AlbumActivity" >
+        </activity>
+        <activity android:name="com.qst.fly.activity.AlbumDetailActivity" >
+        </activity>
+        <activity
             android:name="com.mob.tools.MobUIShell"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
@@ -82,11 +100,14 @@
 
         <!-- 微信分享回调 -->
         <activity
-            android:name=".wxapi.WXEntryActivity"
+            android:name="com.qst.fly.wxapi.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <service android:name="com.qst.fly.service.FetchPictureService" >
+        </service>
     </application>
 
 </manifest>

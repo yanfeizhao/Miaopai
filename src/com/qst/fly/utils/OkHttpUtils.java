@@ -39,7 +39,6 @@ public class OkHttpUtils {
         mOkHttpClient.setConnectTimeout(10, TimeUnit.SECONDS);
         mOkHttpClient.setWriteTimeout(10, TimeUnit.SECONDS);
         mOkHttpClient.setReadTimeout(30, TimeUnit.SECONDS);
-        //cookie enabled
         mOkHttpClient.setCookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ORIGINAL_SERVER));
         mDelivery = new Handler(Looper.getMainLooper());
     }
@@ -51,11 +50,22 @@ public class OkHttpUtils {
         return mInstance;
     }
 
+    /**
+     * GET请求
+     * @param url
+     * @param callback
+     */
     private void getRequest(String url, final ResultCallback callback) {
         final Request request = new Request.Builder().url(url).build();
         deliveryResult(callback, request);
     }
 
+    /**
+     * POST请求
+     * @param url
+     * @param callback
+     * @param params
+     */
     private void postRequest(String url, final ResultCallback callback, List<Param> params) {
         Request request = buildPostRequest(url, params);
         deliveryResult(callback, request);

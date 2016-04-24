@@ -1,0 +1,180 @@
+package com.qst.fly.service;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.qst.fly.config.Configuration;
+import com.qst.fly.db.SqliteHelper;
+import com.qst.fly.entity.Picture;
+import com.qst.fly.entity.Theme;
+import com.qst.fly.utils.JsonUtils;
+import com.qst.fly.utils.OkHttpUtils;
+import com.qst.fly.utils.OkHttpUtils.ResultCallback;
+
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Binder;
+import android.os.Environment;
+import android.os.IBinder;
+
+/**
+* @author smallzoo
+* @version
+* @date 2016年3月17日 下午2:55:55
+* 类说明
+*/
+public class FetchPictureService extends Service {
+	
+	
+	private List<Picture> mPictures;
+	private SqliteHelper mSqliteHelper;
+	private OnDataLoadFinishListener mOnDataLoadFinishListener;
+	private boolean mIsFinishLoadData;
+
+	@Override
+	public IBinder onBind(Intent arg0) {
+		return null;
+	}
+
+	@Override
+	public void onCreate() {
+		mPictures = new ArrayList<Picture>();
+		mIsFinishLoadData = false;
+		mSqliteHelper = new SqliteHelper(this,Configuration.DB_NAME, null, 1);
+		super.onCreate();
+	}
+
+	@Override
+	public void onRebind(Intent intent) {
+
+		super.onRebind(intent);
+	}
+
+	
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		//TODO 开始执行，先获取本地，再获取网络图片
+		return super.onStartCommand(intent, flags, startId);
+	}
+	
+	class MyBinder extends Binder{
+		public void SetOnDataLoadFinishListener(OnDataLoadFinishListener onDataLoadFinishListener){
+			mOnDataLoadFinishListener = onDataLoadFinishListener;
+		}
+	}
+	
+	
+	public interface OnDataLoadFinishListener{
+		void onFinishLoad();
+	}
+	
+	
+	public class DownLoadPictureTask extends AsyncTask<String, Integer, Void>{
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			mIsFinishLoadData = true;
+			if(mOnDataLoadFinishListener != null){
+				mOnDataLoadFinishListener.onFinishLoad();				
+			}
+		}
+		
+		@Override
+		protected Void doInBackground(String... params) {
+			//TODO 加载本地图片
+			//将assert中的图片复制到本地
+			File animalFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH+"/01");
+			copyFilesFassets(FetchPictureService.this, "/01", animalFile.getAbsolutePath());
+			
+			File emojiFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH+"/02");
+			copyFilesFassets(FetchPictureService.this, "/02", emojiFile.getAbsolutePath());
+			
+			File baozouFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH+"/03");
+			copyFilesFassets(FetchPictureService.this, "/03", baozouFile.getAbsolutePath());
+			
+			File personFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH+"/04");
+			copyFilesFassets(FetchPictureService.this, "/04", personFile.getAbsolutePath());
+			//将本地的图片添加到数据库
+			loadLocalPictureToDb();
+			//将网络图片加载到数据库
+			loadNetPictureToDb();
+			
+			return null;
+		}
+
+	
+		
+	}
+	
+	private void loadNetPictureToDb() {
+		OkHttpUtils.get(Configuration.BASE_THEME_PIC_URL+"01", new ResultCallback<String>() {
+			@Override
+			public void onSuccess(String response) {
+				Theme theme = JsonUtils.deserialize(response, Theme.class);
+				for(Picture pic : theme.result){
+					pic.category = 1;
+					mPictures.add(pic);
+					mSqliteHelper.addPicture(pic);
+				}
+			}
+
+			@Override
+			public void onFailure(Exception e) {
+				
+			}
+		});
+	}
+	
+	private void loadLocalPictureToDb() {
+		File animalFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH+"/01");
+		File[] files = animalFile.listFiles();
+		for(int i = 0;i<files.length;i++){
+			File singleFile = files[i];
+			String title = Configuration.animalTitleMaps.get(singleFile.getName());
+			Picture picture = new Picture(1,title,singleFile.getAbsolutePath());
+			mPictures.add(picture);
+			mSqliteHelper.addPicture(picture);
+		}
+		//TODO 等到其他类别的本地图片也加入以后，也加入 数据库
+	}
+	
+	/**  
+	 *  从assets目录中复制整个文件夹内容  
+	 *  @param  context  Context 使用CopyFiles类的Activity 
+	 *  @param  oldPath  String  原文件路径  如：/aa  
+	 *  @param  newPath  String  复制后路径  如：xx:/bb/cc  
+	 */ 
+	public void copyFilesFassets(Context context,String oldPath,String newPath) {                      
+        try {  
+       String fileNames[] = context.getAssets().list(oldPath);//获取assets目录下的所有文件及目录名  
+       if (fileNames.length > 0) {//如果是目录  
+           File file = new File(newPath);  
+           file.mkdirs();//如果文件夹不存在，则递归  
+           for (String fileName : fileNames) {  
+              copyFilesFassets(context,oldPath + "/" + fileName,newPath+"/"+fileName);  
+           }  
+       } else {//如果是文件  
+           InputStream is = context.getAssets().open(oldPath);  
+           FileOutputStream fos = new FileOutputStream(new File(newPath));  
+           byte[] buffer = new byte[1024];  
+           int byteCount=0;                 
+           while((byteCount=is.read(buffer))!=-1) {//循环从输入流读取 buffer字节          
+               fos.write(buffer, 0, byteCount);//将读取的输入流写入到输出流  
+           }  
+           fos.flush();//刷新缓冲区  
+           is.close();  
+           fos.close();  
+       }  
+   } catch (Exception e) {  
+       e.printStackTrace();  
+     
+   }                             
+}  
+}

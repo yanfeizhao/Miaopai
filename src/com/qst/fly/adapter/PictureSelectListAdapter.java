@@ -1,15 +1,19 @@
 package com.qst.fly.adapter;
 
+import java.io.File;
 import java.util.List;
 
-import com.bumptech.glide.Glide;
-import com.qst.fly.R;
-import com.qst.fly.entity.Picture;
-import com.qst.fly.utils.PicassoCache;
-import com.squareup.picasso.Picasso;
-
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.widget.ImageView;
+
+import com.qst.fly.R;
+import com.qst.fly.config.Configuration;
+import com.qst.fly.entity.Picture;
+import com.qst.fly.utils.BitmapUtil;
+import com.squareup.picasso.Picasso;
 
 /**
 * @author smallzoo
@@ -25,12 +29,50 @@ public class PictureSelectListAdapter extends CommonAdapter<Picture> {
 	}
 
 	@Override
-	public void convert(ViewHolder helper, Picture item, int position) {
-		ImageView imageView = helper.getView(R.id.img_item_pic);
+	public void convert(ViewHolder helper, final Picture item, int position) {
+		final ImageView imageView = helper.getView(R.id.img_item_pic);
 		Picasso picasso = Picasso.with(this.context);
-		picasso.setIndicatorsEnabled(true);
-		picasso.load(item.img).into(imageView);
-//		PicassoCache.getPicassoInstance(mContext).load(item.img).into(imageView);
+		if(item.img.startsWith("http://")){
+			picasso.load(item.img)
+			.placeholder(R.drawable.default_picture).into(imageView);
+		}else{
+			picasso.load(new File(item.img)).placeholder(R.drawable.default_picture).into(imageView);			
+		}
+	}
+	
+	
+	private void saveBitmap2Disk(Bitmap bitmap, Picture item) {
+		String fileName = getFileName(item.img);
+		File saveFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH);
+		if(!saveFile.exists()){
+			saveFile.mkdirs();
+		}
+		File pictureSaved = new File(saveFile,fileName);
+		BitmapUtil.saveBitmap(bitmap, pictureSaved.getAbsolutePath());
+	}
+	
+	private Bitmap getBitmapFromDisk(Picture pcPicture){
+		String fileName = getFileName(pcPicture.img);
+		File saveFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH);
+		File pictureSaved = new File(saveFile,fileName);
+		if(pictureSaved.exists()){
+			return BitmapFactory.decodeFile(pictureSaved.getAbsolutePath());
+		}else{
+			return null;
+		}
+	}
+	private boolean isBitmapExitsDisk(Picture pcPicture){
+		String fileName = getFileName(pcPicture.img);
+		File saveFile = new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH+"/"+Configuration.MIAOPAI_THEME_PATH);
+		File pictureSaved = new File(saveFile,fileName);
+		return pictureSaved.exists();
+	}
+	private String getFileName(String url){
+		String[] strs = url.replace("http://", "").split("/");
+		for(int i = 0;i<strs.length;i++){
+			System.out.println(strs[i]);
+		}
+		return strs[strs.length-1];
 	}
 
 }

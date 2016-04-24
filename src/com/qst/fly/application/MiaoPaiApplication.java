@@ -1,7 +1,5 @@
 package com.qst.fly.application;
 
-import com.qst.fly.utils.SharedPreferenceUtil;
-
 import android.app.Application;
 import android.graphics.Bitmap;
 
@@ -16,6 +14,7 @@ public class MiaoPaiApplication extends Application {
 
 	private static MiaoPaiApplication sMiaoPaiApplication = null;
 
+	private int isFirstEnter = -1;//-1：未检测 ，0：否 ，1：是
 	private Bitmap mBitmap = null;
 	
 	synchronized public static MiaoPaiApplication getApplication() {
@@ -25,19 +24,9 @@ public class MiaoPaiApplication extends Application {
 		return sMiaoPaiApplication;
 	}
 
-	private boolean isFirstOpen;
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		SharedPreferenceUtil.setSharedPreferenceName(IS_FIRST_ENTER_SHARED);
-		isFirstOpen  = SharedPreferenceUtil.getBoolean(this, IS_FIRST_ENTER, true);
-		if(isFirstOpen){
-			SharedPreferenceUtil.addInSharePreference(this, IS_FIRST_ENTER, false);			
-		}
-	}
-	
-	public boolean isFirstOpen(){
-		return this.isFirstOpen;
 	}
 	
 	public void saveBitmap(Bitmap bitmap){
@@ -46,4 +35,16 @@ public class MiaoPaiApplication extends Application {
 	public Bitmap getBitmap(){
 		return this.mBitmap;
 	}
+	
+	public int getIsFirstOpen(){
+		return this.isFirstEnter;
+	}
+	public void setIsFirstEnter(boolean b){
+		if(b){
+			this.isFirstEnter = 1;
+		}else{
+			this.isFirstEnter = 0;
+		}
+	}
+	public boolean isNeedResetData = false;
 }

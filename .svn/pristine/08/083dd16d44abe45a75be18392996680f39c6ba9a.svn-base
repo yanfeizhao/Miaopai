@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DevInfor>
+
+    <ShareSDK AppKey="107a1654ee3c6" />
+
+    <!-- ShareByAppClient标识是否使用微博客户端分享，默认是false -->
+
+    <SinaWeibo
+        AppKey="932814291"
+        AppSecret="3bf51bb762450c15e6da7e2b7c03d554"
+        Enable="true"
+        Id="1"
+        RedirectUrl="http://www.sharesdk.cn"
+        ShareByAppClient="false"
+        SortId="1" />
+
+    <TencentWeibo
+        AppKey="801307650"
+        AppSecret="ae36f4ee3946e1cbb98d6965b0b2ff5c"
+        Enable="true"
+        Id="2"
+        RedirectUri="http://sharesdk.cn"
+        SortId="2" />
+
+    <QZone
+        AppId="100371282"
+        AppKey="aed9b0303e3ed1e27bae87c33761161d"
+        Enable="true"
+        Id="3"
+        ShareByAppClient="true"
+        SortId="3" />
+
+    <Wechat
+        AppID="wx0b81e784beb3c12b"
+        AppSecret="883323fb879b6056125ed2bb1736febe"
+        BypassApproval="true"
+        Enable="true"
+        Id="4"
+        SortId="4" />
+
+    <WechatMoments
+        AppId="wx4868b35061f87885"
+        AppSecret="64020361b8ec4c99936c0e3999a9f249"
+        BypassApproval="true"
+        Enable="true"
+        Id="5"
+        SortId="5" />
+
+    <WechatFavorite
+        AppId="wx4868b35061f87885"
+        AppSecret="64020361b8ec4c99936c0e3999a9f249"
+        Enable="true"
+        Id="6"
+        SortId="6" />
+
+    <QQ
+        AppId="1105187849"
+        AppKey="FffuyB8VJxO5IG07"
+        Enable="true"
+        Id="7"
+        ShareByAppClient="false"
+        SortId="7" />
+
+    <Facebook
+        ConsumerKey="107704292745179"
+        ConsumerSecret="38053202e1a5fe26c80c753071f0b573"
+        Enable="true"
+        Id="8"
+        RedirectUrl="http://mob.com"
+        SortId="8" />
+
+    <Twitter
+        CallbackUrl="http://mob.com"
+        ConsumerKey="LRBM0H75rWrU9gNHvlEAA2aOy"
+        ConsumerSecret="gbeWsZvA9ELJSdoBzJ5oLKX0TU09UOwrzdGfo9Tg7DjyGuMe8G"
+        Enable="true"
+        Id="9"
+        SortId="9" />
+
+    <Renren
+        ApiKey="fc5b8aed373c4c27a05b712acba0f8c3"
+        AppId="226427"
+        Enable="true"
+        Id="10"
+        SecretKey="f29df781abdd4f49beca5a2194676ca4"
+        SortId="10" />
+
+    <KaiXin
+        AppKey="358443394194887cee81ff5890870c7c"
+        AppSecret="da32179d859c016169f66d90b6db2a23"
+        Enable="true"
+        Id="11"
+        RedirectUri="http://www.sharesdk.cn"
+        SortId="11" />
+
+    <Email
+        Enable="true"
+        Id="12"
+        SortId="12" />
+
+    <ShortMessage
+        Enable="true"
+        Id="13"
+        SortId="13" />
+
+    <Douban
+        ApiKey="031a96a3aa8b28af094fc3eaffa17a0d"
+        Enable="true"
+        Id="16"
+        RedirectUri="http://mob.com"
+        Secret="2e675e730571b75d"
+        SortId="16" />
+
+    <YouDao
+        ConsumerKey="dcde25dca105bcc36884ed4534dab940"
+        ConsumerSecret="d98217b4020e7f1874263795f44838fe"
+        Enable="true"
+        HostType="product"
+        Id="17"
+        RedirectUri="http://www.sharesdk.cn/"
+        SortId="17" />
+
+    <SohuSuishenkan
+        AppKey="e16680a815134504b746c86e08a19db0"
+        AppSecret="b8eec53707c3976efc91614dd16ef81c"
+        Enable="true"
+        Id="18"
+        RedirectUri="http://sharesdk.cn"
+        SortId="18" />
+
+    <Evernote
+        ConsumerKey="sharesdk-7807"
+        ConsumerSecret="d05bf86993836004"
+        Enable="true"
+        HostType="sandbox"
+        Id="19"
+        ShareByAppClient="false"
+        SortId="19" />
+
+    <LinkedIn
+        ApiKey="ejo5ibkye3vo"
+        Enable="true"
+        Id="20"
+        RedirectUrl="http://sharesdk.cn"
+        SecretKey="cC7B2jpxITqPLZ5M"
+        SortId="20" />
+
+    <GooglePlus
+        Enable="true"
+        Id="21"
+        SortId="21" />
+
+    <FourSquare
+        ClientID="G0ZI20FM30SJAJTX2RIBGD05QV1NE2KVIM2SPXML2XUJNXEU"
+        ClientSecret="3XHQNSMMHIFBYOLWEPONNV4DOTCDBQH0AEMVGCBG0MZ32XNU"
+        Enable="true"
+        Id="22"
+        RedirectUrl="http://www.sharesdk.cn"
+        SortId="22" />
+
+    <Pinterest
+        ClientId="1432928"
+        Enable="true"
+        Id="23"
+        SortId="23" />
+
+    <Flickr
+        ApiKey="33d833ee6b6fca49943363282dd313dd"
+        ApiSecret="3a2c5b42a8fbb8bb"
+        Enable="true"
+        Id="24"
+        RedirectUri="http://www.sharesdk.cn"
+        SortId="24" />
+
+    <Tumblr
+        CallbackUrl="http://sharesdk.cn"
+        Enable="true"
+        Id="25"
+        OAuthConsumerKey="2QUXqO9fcgGdtGG1FcvML6ZunIQzAEL8xY6hIaxdJnDti2DYwM"
+        SecretKey="3Rt0sPFj7u2g39mEVB3IBpOzKnM3JnTtxX2bao2JKk4VV1gtNo"
+        SortId="25" />
+
+    <Dropbox
+        AppKey="i5vw2mex1zcgjcj"
+        AppSecret="3i9xifsgb4omr0s"
+        Enable="true"
+        Id="26"
+        RedirectUri="https://www.sharesdk.cn"
+        SortId="26" />
+
+    <VKontakte
+        ApplicationId="3921561"
+        Enable="true"
+        Id="27"
+        SortId="27" />
+
+    <Instagram
+        ClientId="ff68e3216b4f4f989121aa1c2962d058"
+        ClientSecret="1b2e82f110264869b3505c3fe34e31a1"
+        Enable="true"
+        Id="28"
+        RedirectUri="http://sharesdk.cn"
+        SortId="28" />
+
+    <Yixin
+        AppId="yx0d9a9f9088ea44d78680f3274da1765f"
+        BypassApproval="true"
+        Enable="true"
+        Id="29"
+        SortId="29" />
+
+    <YixinMoments
+        AppId="yx0d9a9f9088ea44d78680f3274da1765f"
+        BypassApproval="true"
+        Enable="true"
+        Id="30"
+        SortId="30" />
+
+    <Mingdao
+        AppKey="EEEE9578D1D431D3215D8C21BF5357E3"
+        AppSecret="5EDE59F37B3EFA8F65EEFB9976A4E933"
+        Enable="true"
+        Id="31"
+        RedirectUri="http://sharesdk.cn"
+        SortId="31" />
+
+    <Line
+        Enable="true"
+        Id="32"
+        SortId="32" />
+
+    <KakaoTalk
+        AppKey="48d3f524e4a636b08d81b3ceb50f1003"
+        Enable="true"
+        Id="33"
+        SortId="33" />
+
+    <KakaoStory
+        AppKey="48d3f524e4a636b08d81b3ceb50f1003"
+        Enable="true"
+        Id="34"
+        SortId="34" />
+
+    <WhatsApp
+        Enable="true"
+        Id="35"
+        SortId="35" />
+
+    <Bluetooth
+        Enable="false"
+        Id="36"
+        SortId="36" />
+
+    <Pocket
+        ConsumerKey="32741-389c565043c49947ba7edf05"
+        Enable="true"
+        Id="37"
+        SortId="37" />
+
+    <Instapaper
+        ConsumerKey="4rDJORmcOcSAZL1YpqGHRI605xUvrLbOhkJ07yO0wWrYrc61FA"
+        ConsumerSecret="GNr1GespOQbrm8nvd7rlUsyRQsIo3boIbMguAl9gfpdL0aKZWe"
+        Enable="true"
+        Id="38"
+        SortId="38" />
+
+    <FacebookMessenger
+        ConsumerKey="107704292745179"
+        ConsumerSecret="38053202e1a5fe26c80c753071f0b573"
+        Enable="true"
+        Id="39"
+        RedirectUrl="http://mob.com"
+        SortId="39" />
+
+    <Alipay
+        AppId="2015072400185895"
+        Enable="true"
+        Id="52"
+        SortId="52" />
+
+</DevInfor>

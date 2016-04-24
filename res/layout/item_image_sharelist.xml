@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    
     android:background="@color/bg_image_show_item"
     android:gravity="center"
     android:orientation="vertical" >
 
-    <!-- -->
+    <!--padding 在代码里动态设置
+    android:padding="@dimen/padding_item_image"
+     -->
      <ImageView
         android:id="@+id/img_sharelist"
         android:layout_width="@dimen/width_item_image"
         android:layout_height="wrap_content" 
-        android:padding="@dimen/padding_item_image"
+        android:background="@color/bg_image_show_item"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:paddingBottom="3dp"
+        android:adjustViewBounds="true"
+         android:scaleType="fitCenter"
      />
 
 </LinearLayout>

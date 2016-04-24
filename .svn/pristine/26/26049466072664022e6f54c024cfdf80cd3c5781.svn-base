@@ -1,0 +1,160 @@
+package com.qst.fly.widget;
+
+import com.qst.fly.widget.view.PLA_AbsListView;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.util.Log;
+
+
+public class WaterfallListView extends MultiColumnListView {
+
+	private int mHeaderState;
+	private boolean mIsAllowLoad;
+	private boolean mIsLoading;
+	private int mPreLoadThreshold;
+
+	private OnHeaderVisibilityChangeListener mOnHeaderVisibilityChangeListener;
+	private OnLoadDataListener mOnLoadDataListener;
+	private OnScrollListener mOnScrollListener;
+
+	public static final String TAG = "WaterfallListView";
+	private OnScrollListener mAdditionalOnScrollListener;
+
+	public WaterfallListView(Context context) {
+		super(context);
+		initWidget();
+	}
+
+	public WaterfallListView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		initWidget();
+	}
+
+	public WaterfallListView(Context context, AttributeSet attrs, int defstyle) {
+		super(context, attrs, defstyle);
+		initWidget();
+	}
+
+	private void initWidget() {
+		mIsAllowLoad = true;
+		mPreLoadThreshold = 4;
+		mIsLoading = false;
+		mHeaderState = OnHeaderVisibilityChangeListener.HEADER_VISIBLE;
+		mAdditionalOnScrollListener = new WaterfallOnScrollListener();
+		setOnScrollListener(mAdditionalOnScrollListener);
+	}
+
+	public void addOnScrollListener(OnScrollListener l) {
+		this.mOnScrollListener = l;
+	}
+
+	@Deprecated
+	public void setOnScrollListener(OnScrollListener l) {
+		super.setOnScrollListener(l);
+	}
+
+	private class WaterfallOnScrollListener implements OnScrollListener {
+
+		@Override
+		public void onScrollStateChanged(PLA_AbsListView view, int scrollState) {
+			if (mOnScrollListener != null)
+				mOnScrollListener.onScrollStateChanged(view, scrollState);
+		}
+
+		@Override
+		public void onScroll(PLA_AbsListView view, int firstVisibleItem,
+				int visibleItemCount, int totalItemCount) {
+			int itemCount = getCount();
+			int headItemCount = getHeaderViewsCount();
+			int firstVisiblePosition = getFirstVisiblePosition();
+			int absFirstVisiblePosition = getAbsFirstVisiblePosition();
+			int childCount = getChildCount();
+			if (absFirstVisiblePosition < headItemCount) {
+				childCount -= headItemCount;
+			}
+			int lastVisibleItem = firstVisibleItem + childCount;
+//			Log.v(TAG, "第一个可见条目是：" + firstVisiblePosition
+//					+ ",当前显示条目总数(除Header)是：" + childCount + ",当前显示的最后一个条目是"
+//					+ (firstVisiblePosition + childCount - 1));
+			
+			if (headItemCount == 0) {
+
+			} else if (absFirstVisiblePosition > headItemCount - 1
+					&& mHeaderState != OnHeaderVisibilityChangeListener.HEADER_INVISIBLE) {
+				mHeaderState = OnHeaderVisibilityChangeListener.HEADER_INVISIBLE;
+				if (mOnHeaderVisibilityChangeListener != null)
+					mOnHeaderVisibilityChangeListener
+							.OnHeaderVisibilityChange(mHeaderState);
+			} else if (absFirstVisiblePosition <= headItemCount - 1 && mHeaderState != OnHeaderVisibilityChangeListener.HEADER_VISIBLE) {
+				
+				mHeaderState = OnHeaderVisibilityChangeListener.HEADER_VISIBLE;
+				if (mOnHeaderVisibilityChangeListener != null)
+					mOnHeaderVisibilityChangeListener
+							.OnHeaderVisibilityChange(mHeaderState);
+			} else {
+
+			}
+			int preLoadPos = Math.max(0, itemCount - mPreLoadThreshold);
+			boolean isOverthreshold = lastVisibleItem >= preLoadPos;
+			if (mIsAllowLoad && !mIsLoading && isOverthreshold) {
+				if (mOnLoadDataListener != null) {
+					mOnLoadDataListener.onLoadDataListener();
+					mIsLoading = true;
+				}
+			}
+
+			if (mOnScrollListener != null)
+				mOnScrollListener.onScroll(view, firstVisibleItem,
+						visibleItemCount, totalItemCount);
+
+		}
+
+	}
+
+	public void notifyFinishLoading(boolean result) {
+		mIsLoading = false;
+	}
+
+	public void setOnHeaderVisibilityChangeListener(
+			OnHeaderVisibilityChangeListener onHeaderVisibilityChangeListener) {
+		this.mOnHeaderVisibilityChangeListener = onHeaderVisibilityChangeListener;
+	}
+
+	public void setOnLoadDataListener(OnLoadDataListener onLoadDataListener) {
+		this.mOnLoadDataListener = onLoadDataListener;
+	}
+
+	/**
+	 * Header可见性变化监听器
+	 * 
+	 * @author Kylin_admin
+	 * 
+	 */
+	public interface OnHeaderVisibilityChangeListener {
+		/** Header不可见 */
+		public static int HEADER_INVISIBLE = 0;
+		/** Header可见 */
+		public static int HEADER_VISIBLE = 1;
+
+		/**
+		 * 当ListView的Header可见性变化时调用，可见性分别为View.VISIBLE和View.INVISIBLE
+		 * 
+		 * @param headerVisibility
+		 *            The current scroll state. One of {@link #HEADER_INVISIBLE}
+		 *            or {@link #HEADER_VISIBLE}.
+		 */
+		public void OnHeaderVisibilityChange(int headerVisibility);
+	}
+
+	/**
+	 * 数据加载监听器
+	 * 
+	 * @author Kylin_admin
+	 * 
+	 */
+	public interface OnLoadDataListener {
+		public void onLoadDataListener();
+	}
+
+}

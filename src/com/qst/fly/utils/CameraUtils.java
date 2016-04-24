@@ -35,9 +35,9 @@ public class CameraUtils {
 	 */
 	public static List<String> getFeaturesOfCamera(Camera mCamera){
 		Camera.Parameters params = mCamera.getParameters(); 
-
-		List<String> focusModes = params.getSupportedFocusModes();
-		return focusModes;
+		List<String> flashModes = params.getSupportedFlashModes();
+		String flashMode = params.getFlashMode();
+		return flashModes;
 	}
 	
 	/**
@@ -46,9 +46,11 @@ public class CameraUtils {
 	 * @param mCamera 
 	 * @return
 	 */
-	public static boolean checkFeatureOfCamera(String feature,Camera mCamera){
-		List<String> focusModes = getFeaturesOfCamera(mCamera);
-		if (focusModes.contains(feature)) {
+	public static boolean checkFeatureOfCamera(Context context,String feature,Camera mCamera){
+		List<String> flashModes = getFeaturesOfCamera(mCamera);
+		if(flashModes.size() == 1){
+			return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+		}else if (flashModes.contains(feature)) {
 			return true;
 		} 
 		return false;

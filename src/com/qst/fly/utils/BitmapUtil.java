@@ -1,15 +1,18 @@
 package com.qst.fly.utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.view.View;
-import android.view.View.MeasureSpec;
 
 /**
  * @author NoahZu
@@ -98,6 +101,10 @@ public class BitmapUtil {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+//			bitmap.recycle();
+//			bitmap = null;
+//			System.gc();
 		}
 	}
 
@@ -119,6 +126,8 @@ public class BitmapUtil {
 		Canvas canvas = new Canvas(bitmap);
 		canvas.drawBitmap(backBitmap, new Matrix(), null);
 		canvas.drawBitmap(frontBitmap, left, top, null);
+		frontBitmap.recycle();
+		frontBitmap = null;
 		return bitmap;
 	}
 
@@ -129,33 +138,104 @@ public class BitmapUtil {
 	 * @return
 	 */
 	public static Bitmap convertViewToBitmap(View v) {
-		 v.clearFocus();
-         v.setPressed(false);
+		v.clearFocus();
+		v.setPressed(false);
 
-         boolean willNotCache = v.willNotCacheDrawing();
-         v.setWillNotCacheDrawing(false);
+		boolean willNotCache = v.willNotCacheDrawing();
+		v.setWillNotCacheDrawing(false);
 
-         // Reset the drawing cache background color to fully transparent 
-         // for the duration of this operation 
-         int color = v.getDrawingCacheBackgroundColor();
-         v.setDrawingCacheBackgroundColor(0);
+		// Reset the drawing cache background color to fully transparent
+		// for the duration of this operation
+		int color = v.getDrawingCacheBackgroundColor();
+		v.setDrawingCacheBackgroundColor(0);
 
-         if (color != 0) {
-             v.destroyDrawingCache();
-         } 
-         v.buildDrawingCache();
-         Bitmap cacheBitmap = v.getDrawingCache();
-         if (cacheBitmap == null) {
-             return null; 
-         } 
+		if (color != 0) {
+			v.destroyDrawingCache();
+		}
+		v.buildDrawingCache();
+		Bitmap cacheBitmap = v.getDrawingCache();
+		if (cacheBitmap == null) {
+			return null;
+		}
 
-         Bitmap bitmap = Bitmap.createBitmap(cacheBitmap);
+		Bitmap bitmap = Bitmap.createBitmap(cacheBitmap);
 
-         // Restore the view 
-         v.destroyDrawingCache();
-         v.setWillNotCacheDrawing(willNotCache);
-         v.setDrawingCacheBackgroundColor(color);
+		// Restore the view
+		v.destroyDrawingCache();
+		v.setWillNotCacheDrawing(willNotCache);
+		v.setDrawingCacheBackgroundColor(color);
 
-         return bitmap;
+		return bitmap;
 	}
+
+	/**
+	 * 图片压缩：质量压缩
+	 * 
+	 * @param image
+	 * @param size
+	 *            大小
+	 * @return
+	 */
+	public static Bitmap compressImage(Bitmap image, int size) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		image.compress(Bitmap.CompressFormat.JPEG, 100, baos);// 质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+		int options = 100;
+		while (baos.toByteArray().length / 1024 > size) { // 循环判断如果压缩后图片是否大于100kb,大于继续压缩
+			baos.reset();// 重置baos即清空baos
+			image.compress(Bitmap.CompressFormat.JPEG, options, baos);// 这里压缩options%，把压缩后的数据存放到baos中
+			options -= 10;// 每次都减少10
+		}
+		ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());// 把压缩后的数据baos存放到ByteArrayInputStream中
+		Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);// 把ByteArrayInputStream数据生成图片
+		image.recycle();
+		image = null;
+		return bitmap;
+	}
+
+	/**
+	 * 
+	 * @param res
+	 * @param resId
+	 * @param reqWidth
+	 * @param reqHeight
+	 * @return
+	 */
+	public static Bitmap decodeSampledBitmapFromResource(String path, int reqWidth, int reqHeight) {
+
+		// 第一次加载时 将inJustDecodeBounds设置为true 表示不真正加载图片到内存
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(path, options);
+
+		// 根据目标宽和高 以及当前图片的大小 计算出压缩比率
+		options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+		// 将inJustDecodeBounds设置为false 真正加载图片 然后根据压缩比率压缩图片 再去解码
+		options.inJustDecodeBounds = false;
+		return BitmapFactory.decodeFile(path, options);
+	}
+
+	// 计算压缩比率 android官方提供的算法
+	public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > reqHeight || width > reqWidth) {
+			// 将当前宽和高 分别减小一半
+			final int halfHeight = height / 2;
+			final int halfWidth = width / 2;
+
+			// Calculate the largest inSampleSize value that is a power of 2 and
+			// keeps both
+			// height and width larger than the requested height and width.
+			while ((halfHeight / inSampleSize) > reqHeight && (halfWidth / inSampleSize) > reqWidth) {
+				inSampleSize *= 2;
+			}
+		}
+
+		return inSampleSize;
+	}
+
 }

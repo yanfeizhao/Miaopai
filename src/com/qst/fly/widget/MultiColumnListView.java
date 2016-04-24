@@ -1,36 +1,14 @@
-/*******************************************************************************
- * Copyright 2012 huewu.yang <hueuw.yang@gmail.com>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
-
 package com.qst.fly.widget;
-
-
-
-
-
-import com.qst.fly.R;
-import com.qst.fly.widget.view.PLA_AbsListView;
-import com.qst.fly.widget.view.PLA_ListView;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.SparseIntArray;
 import android.view.View;
+
+import com.qst.fly.R;
+import com.qst.fly.widget.view.PLA_ListView;
 
 /**
  * @author huewu.ynag
@@ -46,8 +24,8 @@ public class MultiColumnListView extends PLA_ListView {
 	private int mColumnNumber = 2;
 	private Column[] mColumns = null;
 	private Column mFixedColumn = null;	//column for footers & headers.
-	private ParcelableSparseIntArray mItems = new ParcelableSparseIntArray();
-
+	private SparseIntArray mItems = new SparseIntArray();
+	
 	private int mColumnPaddingLeft = 0;
 	private int mColumnPaddingRight = 0;
 
@@ -86,7 +64,7 @@ public class MultiColumnListView extends PLA_ListView {
 			}else{
 				mColumnNumber = DEFAULT_COLUMN_NUMBER;
 			}
-
+			
 			mColumnPaddingLeft = a.getDimensionPixelSize(R.styleable.MultiColumnListView_plaColumnPaddingLeft, 0);
 			mColumnPaddingRight = a.getDimensionPixelSize(R.styleable.MultiColumnListView_plaColumnPaddingRight, 0);
 			a.recycle();
@@ -98,14 +76,6 @@ public class MultiColumnListView extends PLA_ListView {
 
 		mFixedColumn = new FixedColumn();
 	}
-
-    public void setColumnPaddingLeft(int columnPaddingLeft) {
-        this.mColumnPaddingLeft = columnPaddingLeft;
-    }
-
-    public void setColumnPaddingRight(int columnPaddingRight) {
-        this.mColumnPaddingRight = columnPaddingRight;
-    }
 
 	///////////////////////////////////////////////////////////////////////
 	//Override Methods...
@@ -136,7 +106,7 @@ public class MultiColumnListView extends PLA_ListView {
 		if(isFixedView(child))
 			child.measure(widthMeasureSpec, heightMeasureSpec);
 		else
-			child.measure(View.MeasureSpec.EXACTLY | getColumnWidth(position), heightMeasureSpec);
+			child.measure(MeasureSpec.EXACTLY | getColumnWidth(position), heightMeasureSpec);
 	}
 
 	@Override
@@ -147,7 +117,7 @@ public class MultiColumnListView extends PLA_ListView {
 	@Override
 	protected void onItemAddedToList(int position, boolean flow ) {
 		super.onItemAddedToList(position, flow);
-
+		
 		if( isHeaderOrFooterPosition(position) == false){
 			Column col = getNextColumn( flow, position );
 			mItems.append(position, col.getIndex());
@@ -170,9 +140,9 @@ public class MultiColumnListView extends PLA_ListView {
 
 	@Override
 	protected void onAdjustChildViews(boolean down) {
-
+		
 		int firstItem = getFirstVisiblePosition();
-		if(!down && firstItem == 0){
+		if( down == false && firstItem == 0){
 			final int firstColumnTop = mColumns[0].getTop();
 			for( Column c : mColumns ){
 				final int top = c.getTop();
@@ -198,11 +168,11 @@ public class MultiColumnListView extends PLA_ListView {
 	@Override
 	protected int getFillChildTop() {
 		//find largest column.
-        int result = Integer.MIN_VALUE;
-        for(Column c : mColumns){
-            int top = c.getTop();
-            result = Math.max(result, top);
-        }
+		int result = Integer.MIN_VALUE;
+		for(Column c : mColumns){
+			int top = c.getTop();
+			result = result < top ? top : result;
+		}
 		return result;
 	}
 
@@ -231,10 +201,10 @@ public class MultiColumnListView extends PLA_ListView {
 
 	@Override
 	protected int getItemLeft(int pos) {
-
+		
 		if( isHeaderOrFooterPosition(pos) )
 			return mFixedColumn.getColumnLeft();
-
+		
 		return getColumnLeft(pos);
 	}
 
@@ -276,7 +246,7 @@ public class MultiColumnListView extends PLA_ListView {
 		if( colIndex != -1 ){
 			return mColumns[colIndex];
 		}
-
+		
 		//adjust position (exclude headers...)
 		position = Math.max(0, position - getHeaderViewsCount());
 
@@ -313,7 +283,7 @@ public class MultiColumnListView extends PLA_ListView {
 		}
 
 		return result;
-	}
+	}	
 
 	private int getColumnLeft(int pos) {
 		int colIndex = mItems.get(pos, -1);
@@ -383,7 +353,7 @@ public class MultiColumnListView extends PLA_ListView {
 
 		public void offsetTopAndBottom(int offset) {
 			if( offset == 0 )
-				return;
+				return; 
 
 			//find biggest value.
 			int childCount = getChildCount();
@@ -404,10 +374,10 @@ public class MultiColumnListView extends PLA_ListView {
 			int childCount = getChildCount();
 			for( int index = 0; index < childCount; ++index ){
 				View v = getChildAt(index);
-                if(v.getLeft() != mColumnLeft && !isFixedView(v))
-                    continue;
-                top = Math.min(top, v.getTop());
-            }
+				if(v.getLeft() != mColumnLeft && isFixedView(v) == false )
+					continue;
+				top = top > v.getTop() ? v.getTop() : top;
+			}
 
 			if( top == Integer.MAX_VALUE )
 				return mSynchedTop;	//no child for this column. just return saved sync top..
@@ -416,7 +386,7 @@ public class MultiColumnListView extends PLA_ListView {
 
 		public void save() {
 			mSynchedTop = 0;
-			mSynchedBottom = getTop();
+			mSynchedBottom = getTop(); //getBottom();
 		}
 
 		public void clear() {
@@ -441,70 +411,6 @@ public class MultiColumnListView extends PLA_ListView {
 			return getScrollChildTop();
 		}
 
-	}
-	
-	
-	private boolean loadingMoreComplete = true;
+	}//end of class
 
-    public void onLoadMoreComplete() {
-        loadingMoreComplete = true;
-    }
-
-    public interface OnLoadMoreListener {
-        /**
-         * Method to be called when scroll to buttom is requested
-         */
-        void onLoadMore();
-    }
-
-    public OnScrollListener scroller = new OnScrollListener() {
-        private int visibleLastIndex = 0;
-        private static final int OFFSET = 2;
-
-        @Override
-        public void onScrollStateChanged(PLA_AbsListView view, int scrollState) {
-            int lastIndex = getAdapter().getCount() - OFFSET;
-            if (scrollState == OnScrollListener.SCROLL_STATE_IDLE
-                    && visibleLastIndex == lastIndex && loadingMoreComplete) {
-
-                loadMoreListener.onLoadMore();
-                loadingMoreComplete = false;
-
-            }
-        }
-
-        @Override
-        public void onScroll(PLA_AbsListView view, int firstVisibleItem,
-                             int visibleItemCount, int totalItemCount) {
-            visibleLastIndex = firstVisibleItem + visibleItemCount - OFFSET;
-        }
-    };
-    OnLoadMoreListener loadMoreListener;
-
-    public void setOnLoadMoreListener(OnLoadMoreListener listener) {
-
-        if (listener != null) {
-            this.loadMoreListener = listener;
-            this.setOnScrollListener(scroller);
-        }
-    }//end of class
-
-
-    @Override
-    public Parcelable onSaveInstanceState() {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("instanceState", super.onSaveInstanceState());
-        bundle.putParcelable("items", mItems);
-        return bundle;
-    }
-
-    @Override
-    public void onRestoreInstanceState(Parcelable state) {
-        if (state instanceof  Bundle) {
-            Bundle bundle = (Bundle) state;
-            mItems = bundle.getParcelable("items");
-            state = bundle.getParcelable("instanceState");
-        }
-        super.onRestoreInstanceState(state);
-    }
 }//end of class

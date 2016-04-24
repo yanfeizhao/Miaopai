@@ -16,8 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerInParent="true"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
+            android:padding="20dp"
             android:src="@drawable/back_btn" />
 
         <TextView

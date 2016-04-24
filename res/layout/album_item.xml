@@ -52,6 +52,8 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
             android:src="@drawable/png_common_enter" />
     </RelativeLayout>
 

@@ -1,0 +1,59 @@
+package com.qst.fly.config;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @author NoahZu
+ * @version
+ * @date 2016年3月14日 上午10:51:55 类说明
+ */
+public class Configuration {
+	public static int sPictureWidth = 1080;
+	public static int sPictureHeight = 1920;
+
+	public static String MIAOPAI_FILE_PATH = "qst_miaopai";
+	public static String MIAOPAI_TEMP_PATH = "temp";
+	public static String MIAOPAI_SAVED_PATH = "saved";
+	public static String MIAOPAI_THEME_PATH = "theme";
+
+	public static int APP_VERSION = 1;
+	/**
+	 * 示例图片接口
+	 */
+	public static String EXAMPLE_PIC_URL = "http://api.miaopai.com/m/maopaiImage.json";
+	/**
+	 * 装饰图片 base url 
+	 */
+	public static String BASE_THEME_PIC_URL = "http://api.miaopai.com/m/maopaiMaterial.json?cateid=";
+	
+
+	public static String DB_NAME = "miaopai.db";
+	
+	public static Map<String,String> animalTitleMaps = new HashMap<String,String>();
+	static{
+		animalTitleMaps.put("11001.png","@招财大法好");
+		animalTitleMaps.put("11002.png","@韩寒的马达加斯加");
+		animalTitleMaps.put("11003.png","@马达的拉斯维加斯");
+		animalTitleMaps.put("11004.png","FLASH.png");
+		animalTitleMaps.put("11005.png","Thumbs.db");
+		animalTitleMaps.put("11006.png","不开心猫.png");
+		animalTitleMaps.put("11007.png","兔子.png");
+		animalTitleMaps.put("11008.png","哈士奇.png");
+		animalTitleMaps.put("11009.png","尼克.png");
+		animalTitleMaps.put("110010.png","布偶猫muffi.png");
+		animalTitleMaps.put("11011.png","张崇子.png");
+		animalTitleMaps.put("11012.png","张梓琳的狗.png");
+		animalTitleMaps.put("11013.png","惊讶猫咪.png");
+		animalTitleMaps.put("11014.png","松鼠.png");
+		animalTitleMaps.put("11015.png","波斯猫Grafi.png");
+		animalTitleMaps.put("11016.png","牛头梗.png");
+		animalTitleMaps.put("11017.png","瓜皮.png");
+		animalTitleMaps.put("11018.png","疯狂动物城.png");
+		animalTitleMaps.put("11019.png","疯狂动物城市长.png");
+		animalTitleMaps.put("11020.png","草泥马.png");
+		animalTitleMaps.put("11021.png","长颈鹿.png");
+	}
+	
+	
+}

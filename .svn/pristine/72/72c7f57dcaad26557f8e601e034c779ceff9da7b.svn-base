@@ -1,0 +1,131 @@
+package com.qst.fly.activity;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+
+import com.qst.fly.R;
+import com.qst.fly.config.Configuration;
+import com.qst.fly.utils.BitmapUtil;
+import com.qst.fly.utils.CameraOperationHelper;
+import com.qst.fly.utils.StringUtils;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.os.Environment;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.Window;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+/**
+* @author NoahZu
+* @version
+*/
+public class PicturePreviewActivity extends BaseActivity implements OnClickListener{
+	
+	private String picPath;
+	
+	private ImageView imageView;
+
+	private ImageView retakeBtn;
+	private ImageView shareBtn;
+	private ImageView saveBtn;
+	
+	private Bitmap bitmap;
+	private Bitmap mDecorationBitmap;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.activity_preview);
+		initView();
+		getPicPath(getIntent());
+	}
+
+	private void initView() {
+		imageView = (ImageView) findViewById(R.id.img_preview);
+		retakeBtn = (ImageView) findViewById(R.id.btn_retake);
+		shareBtn = (ImageView) findViewById(R.id.btn_share);
+		saveBtn = (ImageView) findViewById(R.id.btn_save);
+		
+		retakeBtn.setOnClickListener(this);
+		shareBtn.setOnClickListener(this);
+		saveBtn.setOnClickListener(this);
+	}
+
+	/**
+	 * 获取从照相界面传过来的bitmap信息
+	 * @param intent
+	 */
+	private void getPicPath(Intent intent) {
+		int cameraId = intent.getIntExtra(CameraPreviewActivity.CAMERA_ID, CameraOperationHelper.FRONT_CAMERA);
+		String path = intent.getStringExtra(CameraPreviewActivity.PICPATH);
+		String decorationPath =  intent.getStringExtra(CameraPreviewActivity.DECORATION);
+		mDecorationBitmap = BitmapFactory.decodeFile(decorationPath);
+		
+		bitmap = BitmapFactory.decodeFile(path);
+		if(cameraId == CameraOperationHelper.FRONT_CAMERA){
+			bitmap = BitmapUtil.roateImage(bitmap, -90f);//翻转
+			bitmap = BitmapUtil.mirrorRoate(bitmap);//对图片做镜面翻转			
+		}else{
+			bitmap = BitmapUtil.roateImage(bitmap, 90f);//翻转	
+		}
+		imageView.post(new Runnable() {
+			@Override
+			public void run() {
+				bitmap = BitmapUtil.scaleImage(bitmap, imageView.getWidth(), imageView.getHeight());//缩放图片
+				int xPosition = bitmap.getWidth()-mDecorationBitmap.getWidth();
+				int yPosition = bitmap.getHeight()- mDecorationBitmap.getHeight();
+				
+				bitmap = BitmapUtil.mergeBitmap(bitmap, 
+									   mDecorationBitmap, 
+									   xPosition,
+									   yPosition);//合并图片 
+				
+				imageView.setImageBitmap(bitmap);
+			}
+		});
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.btn_retake:
+			finish();
+			break;
+		case R.id.btn_save:
+			if(bitmap != null){
+				File file = new File(new File(Environment.getExternalStorageDirectory(),Configuration.MIAOPAI_FILE_PATH),
+						Configuration.MIAOPAI_SAVED_PATH);
+				if(!file.exists()){
+					file.mkdir();
+				}
+				
+				File picFile = new File(file,StringUtils.formatDate(new Date(), "yyyyMMddHHmmss")+".png");
+				if(!picFile.exists()){
+					try {
+						picFile.createNewFile();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				BitmapUtil.saveBitmap(bitmap, picFile.getAbsolutePath());
+				showToast("相片保存至" + file.getAbsolutePath(), true, false);
+			}
+			break;
+		case R.id.btn_share:
+			Intent intent = new Intent(PicturePreviewActivity.this,ShareActivity.class);
+			startActivity(intent);
+			break;
+		default:
+			break;
+		}
+	}
+}

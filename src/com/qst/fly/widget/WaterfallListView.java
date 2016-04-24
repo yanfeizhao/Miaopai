@@ -67,32 +67,24 @@ public class WaterfallListView extends MultiColumnListView {
 				int visibleItemCount, int totalItemCount) {
 			int itemCount = getCount();
 			int headItemCount = getHeaderViewsCount();
-			int firstVisiblePosition = getFirstVisiblePosition();
+			int firstVisiblePosition = getFirstVisiblePosition();//第一个可见条目是
 			int absFirstVisiblePosition = getAbsFirstVisiblePosition();
-			int childCount = getChildCount();
+			int childCount = getChildCount();//前显示条目总数(除Header)是
 			if (absFirstVisiblePosition < headItemCount) {
 				childCount -= headItemCount;
 			}
 			int lastVisibleItem = firstVisibleItem + childCount;
-//			Log.v(TAG, "第一个可见条目是：" + firstVisiblePosition
-//					+ ",当前显示条目总数(除Header)是：" + childCount + ",当前显示的最后一个条目是"
-//					+ (firstVisiblePosition + childCount - 1));
 			
 			if (headItemCount == 0) {
 
 			} else if (absFirstVisiblePosition > headItemCount - 1
 					&& mHeaderState != OnHeaderVisibilityChangeListener.HEADER_INVISIBLE) {
-				Log.v(TAG, "A--第一个可见条目是：" + absFirstVisiblePosition
-						+ ",Header数量是：" + headItemCount + ",mHeaderState状态时："
-						+ mHeaderState);
 				mHeaderState = OnHeaderVisibilityChangeListener.HEADER_INVISIBLE;
 				if (mOnHeaderVisibilityChangeListener != null)
 					mOnHeaderVisibilityChangeListener
 							.OnHeaderVisibilityChange(mHeaderState);
 			} else if (absFirstVisiblePosition <= headItemCount - 1 && mHeaderState != OnHeaderVisibilityChangeListener.HEADER_VISIBLE) {
-				Log.v(TAG, "B--第一个可见条目是：" + absFirstVisiblePosition
-						+ ",Header数量是：" + headItemCount + ",mHeaderState状态时："
-						+ mHeaderState);
+				
 				mHeaderState = OnHeaderVisibilityChangeListener.HEADER_VISIBLE;
 				if (mOnHeaderVisibilityChangeListener != null)
 					mOnHeaderVisibilityChangeListener
@@ -108,11 +100,9 @@ public class WaterfallListView extends MultiColumnListView {
 					mIsLoading = true;
 				}
 			}
-
 			if (mOnScrollListener != null)
 				mOnScrollListener.onScroll(view, firstVisibleItem,
 						visibleItemCount, totalItemCount);
-
 		}
 
 	}

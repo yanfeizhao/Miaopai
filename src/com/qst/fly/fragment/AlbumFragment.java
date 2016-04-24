@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.qst.fly.R;
 import com.qst.fly.activity.AlbumActivity;
-import com.qst.fly.adapter.CameraAlbumAdapter;
+import com.qst.fly.adapter.AlbumAdapter;
 import com.qst.fly.entity.PhotoUpImageBucket;
 import com.qst.fly.utils.PhotoUpAlbumHelper;
 import com.qst.fly.utils.PhotoUpAlbumHelper.GetAlbumList;
@@ -20,21 +20,18 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-/**
-* @author smallzoo
-* @version
-* @date 2016年3月16日 上午10:43:34
-* 类说明
-*/
 public class AlbumFragment extends Fragment {
 	public static final String IMAGE_LIST = "imagelist";
 	protected static final int REQUEST_PHOTO = 6;
 
 	private View mConentView;
 	private ListView mListView;
-	private CameraAlbumAdapter adapter;
-	private PhotoUpAlbumHelper photoUpAlbumHelper;/** 加载相册和图片的异步线程类 */
-	private List<PhotoUpImageBucket> mList ;/** 存放相册列表数据 */
+	/** 相册列表适配器 */
+	private AlbumAdapter adapter;
+	/** 加载相册和图片的异步线程类 */
+	private PhotoUpAlbumHelper photoUpAlbumHelper;
+	/** 相册数据集合 */
+	private List<PhotoUpImageBucket> mList ;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,22 +43,27 @@ public class AlbumFragment extends Fragment {
 		return mConentView;
 	}
 	
-	
-
+	/**
+	 * 初始化
+	 */
 	private void init() {
 		mListView = (ListView) mConentView.findViewById(R.id.listview_album);
 		mList = new ArrayList<PhotoUpImageBucket>();
-		adapter = new CameraAlbumAdapter(getActivity(), mList,
+		adapter = new AlbumAdapter(getActivity(), mList,
 				R.layout.album_item);
 		mListView.setAdapter(adapter);
 	}
 	
 	/**
-	 * 获得数据
+	 * 获取数据
 	 */
 	private void loadData() {
+		
+		//实例化异部类
 		photoUpAlbumHelper = PhotoUpAlbumHelper.getHelper();
 		photoUpAlbumHelper.init(getActivity());
+		
+		//获取相片集合
 		photoUpAlbumHelper.setGetAlbumList(new GetAlbumList() {
 			@Override
 			public void getAlbumList(List<PhotoUpImageBucket> addList) {

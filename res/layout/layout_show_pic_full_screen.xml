@@ -7,12 +7,6 @@
     <ImageView
         android:id="@+id/img_dis_screen"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    
-    <TextView
-        android:id="@+id/text_dis_close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="关闭" 
-        android:padding="20dp"/>
+        android:layout_height="match_parent" 
+        android:background="@drawable/before"/>
 </RelativeLayout>

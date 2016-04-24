@@ -19,22 +19,27 @@
 
     <attr name="absListViewStyle" format="reference" />
     <attr name="listViewStyle" format="reference" />
-    
+
     <declare-styleable name="MultiColumnListView">
         <attr name="plaColumnNumber" format="integer" />
         <attr name="plaLandscapeColumnNumber" format="integer" />
         <attr name="plaColumnPaddingLeft" format="dimension" />
         <attr name="plaColumnPaddingRight" format="dimension" />
-    </declare-styleable>    
-    
+    </declare-styleable>
     <declare-styleable name="PullToRefreshView">
         <attr name="ptrHeight" format="dimension" />
         <attr name="ptrSpinnerMarginRight" format="dimension" />
         <attr name="ptrArrowMarginRight" format="dimension" />
         <attr name="ptrTextSize" format="dimension" />
         <attr name="ptrLastUpdateTextSize" format="dimension" />
-    </declare-styleable>    
-
+    </declare-styleable>
+    <declare-styleable name="GifView">
+        <attr name="gif" format="reference" />
+        <attr name="paused" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="CustomTheme">
+        <attr name="gifViewStyle" format="reference" />
+    </declare-styleable>
     <declare-styleable name="View">
 
         <!--
@@ -813,11 +818,10 @@
         -->
         <attr name="fastScrollAlwaysVisible" format="boolean" />
     </declare-styleable>
-    
     <declare-styleable name="ListView">
 
         <!-- Drawable or color to draw between list items. -->
-		<!-- <attr name="divider" format="reference|color" /> -->
+        <!-- <attr name="divider" format="reference|color" /> -->
         <!--
              Height of the divider. Will use the intrinsic height of the divider if this
              is not specified.
@@ -836,9 +840,8 @@
         <!-- Drawable to draw above list content. -->
         <attr name="overScrollHeader" format="reference|color" />
         <!-- Drawable to draw below list content. -->
-        
-        <attr name="overScrollFooter" format="reference|color" />
 
+        <attr name="overScrollFooter" format="reference|color" />
         <attr name="plaContentBackground" format="color" />
     </declare-styleable>
 

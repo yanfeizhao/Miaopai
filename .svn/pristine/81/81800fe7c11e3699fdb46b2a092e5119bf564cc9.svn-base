@@ -1,0 +1,91 @@
+package com.qst.fly.db;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.qst.fly.entity.Picture;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.sqlite.SQLiteOpenHelper;
+
+/**
+* @author smallzoo
+* @version
+* @date 2016年3月17日 下午1:49:47
+* 类说明
+*/
+public class SqliteHelper extends SQLiteOpenHelper {
+
+	private static final String CREATE_THEME_TABLE = "create table theme_table ("
+			+ "_id integer primary key autoincrement,"
+			+ "category integer not null,"
+			+ "title varchar(128) not null,"
+			+ "path varchar(512) not null);";
+	private static final String CREATE_PICTURE_TABLE = "create table picture_table("
+			+ "_id integer primary key autoincrement,"
+			+ "path varchar(512));";
+	
+	public SqliteHelper(Context context, String name, CursorFactory factory, int version) {
+		super(context, name, factory, version);
+		
+	}
+
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+		db.execSQL(CREATE_THEME_TABLE);
+		db.execSQL(CREATE_PICTURE_TABLE);
+	}
+
+	/**
+	 * 查询图片
+	 * @param category
+	 * @return
+	 */
+	public List<Picture> getPicturesByCategory(int category){
+		List<Picture> pictures = new ArrayList<Picture>();
+		String sql = "select * from theme_table where category = " + category +";";
+		Cursor cursor = getWritableDatabase().rawQuery(sql, new String[]{});
+		while(cursor.moveToNext()){
+			Picture picture = new Picture(cursor.getString(3), cursor.getString(2));
+			pictures.add(picture);
+		}
+		return pictures;
+	}
+	
+	/**
+	 * 添加图片
+	 * @param category
+	 * @param picture
+	 */
+	public void addPicture(Picture picture){
+		String sql = "insert into theme_table values(null,"+picture.category+",'"+picture.title+"','"+picture.img+"');";
+		getWritableDatabase().execSQL(sql);
+	}
+	/**
+	 * 清除掉非本地的图片，慎用
+	 */
+	public void clearDownloadPic(){
+		
+	}
+	
+	//TODO delete
+	public void deletePicture(){
+		
+	}
+	
+	/**
+	 * 
+	 * @param picture
+	 */
+	public void modifyPicture(Picture picture){
+		
+	}
+	@Override
+	public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
+		
+	}
+
+}

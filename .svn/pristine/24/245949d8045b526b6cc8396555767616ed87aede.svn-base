@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="indicator_right_padding">10dp</dimen>
+    <dimen name="indicator_corner_radius">12dp</dimen>
+    <dimen name="indicator_internal_padding">4dp</dimen>
+    <dimen name="header_footer_left_right_padding">24dp</dimen>
+    <dimen name="header_footer_top_bottom_padding">12dp</dimen>
+
+    <!-- 相机界面 -->
+    <dimen name="margin_of_bottom_menu">19dp</dimen>
+    <dimen name="margin_of_bottom_menu2">18dp</dimen>
+    <dimen name="top_of_bottom_menu">4dp</dimen>
+    <dimen name="bottom_of_bottom_menu">4dp</dimen>
+    <dimen name="hor_list_top">13dp</dimen>
+    <dimen name="hor_list_bottom">13dp</dimen>
+    <dimen name="height_of_hor_list">95dp</dimen>
+    <dimen name="divider_width">9dp</dimen>
+    <dimen name="launch_top">154dp</dimen>
+    <dimen name="switch_margin_right">6dp</dimen>
+    <dimen name="switch_margin_top">7dp</dimen>
+    <dimen name="flash_margin_left">3dp</dimen>
+    <dimen name="flash_margin_top">6dp</dimen>
+    <dimen name="float_image_width">160dp</dimen>
+    <dimen name="float_image_height">160dp</dimen>
+    <dimen name="float_image_margin_left">5dp</dimen>
+    <dimen name="float_image_margin_right">5dp</dimen>
+    <dimen name="float_image_margin_top">5dp</dimen>
+    <dimen name="float_linear_margin_right">4dp</dimen>
+    <dimen name="float_linear_margin_bottom">4dp</dimen>
+    <dimen name="float_text_margin_top">8dp</dimen>
+    <dimen name="float_text_margin_bottom">8dp</dimen>
+    <dimen name="float_text_size">17sp</dimen>
+    <!-- 照片预览界面 -->
+    <dimen name="retake_margin_left">5dp</dimen>
+    <dimen name="retake_margin_top">7dp</dimen>
+    <dimen name="share_margin_right">7dp</dimen>
+    <dimen name="share_margin_top">7dp</dimen>
+    <dimen name="save_margin_right">29dp</dimen>
+    <dimen name="save_margin_top">7dp</dimen>
+    <!-- 分享界面的字体大小 -->
+    <dimen name="share_appname">12sp</dimen>
+ <!-- 35px -->
+    <dimen name="share_title">17sp</dimen>
+ <!-- 52px -->
+    <!-- 分享界面margin -->
+    <dimen name="margin_left_or_right_share">31dp</dimen>
+ <!-- 93px -->
+    <dimen name="margin_applogo_share">23dp</dimen>
+ <!-- 70px -->
+    <dimen name="margin_logo_name_share">11dp</dimen>
+ <!-- 33px -->
+    <dimen name="margin_top_share">236dp</dimen>
+ <!-- 707px -->
+    <dimen name="margin_bottom_subtitle">9dp</dimen>
+ <!-- 27px 明星喵拍秀 -->
+
+    <dimen name="margin_top_text">13dp</dimen>
+ <!-- 39px分享给朋友的margin_top -->
+    <!-- 分享，收起来的应用图标间的边距 -->
+    <dimen name="margin_left_smallicon">84dp</dimen>
+ <!-- 253px -->
+    <dimen name="margin_right_smallicon">85dp</dimen>
+ <!-- 256px -->
+    <dimen name="margin_top_smallicon">8dp</dimen>
+ <!-- 23px，五个小图标的margin_top -->
+    <dimen name="margin_right_smallicon_between">12dp</dimen>
+ <!-- 43px，五个小图标的margin_right -->
+    <dimen name="height_top">42dp</dimen>
+ <!-- 127px高度，分享页面的小图标一栏的高度 -->
+
+ <dimen name="margin_top_back">4dp</dimen><!-- 13px -->
+    <dimen name="margin_top_takephoto">5dp</dimen><!-- 14px-->
+    <dimen name="margin_right_takephoto">8dp</dimen><!-- 24px -->
+    <dimen name="width_item_image">173dp</dimen><!-- 519px -->
+    <dimen name="padding_item_image">5dp</dimen><!-- 14px -->
+
+</resources>

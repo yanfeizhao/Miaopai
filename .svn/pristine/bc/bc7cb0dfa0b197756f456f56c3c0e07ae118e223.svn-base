@@ -1,0 +1,86 @@
+package com.qst.fly.activity;
+
+import com.qst.fly.R;
+
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.app.Activity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class BaseActivity extends FragmentActivity {
+
+	protected static final String TAG = "BaseActivity";
+	
+	protected void showViewFindToast(){
+		Toast toast = new Toast(this);
+		View view = LayoutInflater.from(this).inflate(R.layout.toast_viewfinder, null);
+		TextView tvMsg = (TextView) view.findViewById(R.id.toast_img_tv_msg);
+		tvMsg.setText(R.string.find_picture);
+		toast.setView(view);
+		toast.setGravity(Gravity.CENTER, 0, 300);
+		toast.setDuration(Toast.LENGTH_LONG);
+		toast.show();
+	}
+	protected void showPromoteToast(){
+		Toast toast = new Toast(this);
+		View view = LayoutInflater.from(this).inflate(R.layout.toast_prompt, null);
+		TextView tvMsg = (TextView) view.findViewById(R.id.toast_img_tv_msg);
+		tvMsg.setText(R.string.touch_screen_take);
+		toast.setView(view);toast.setGravity(Gravity.CENTER, 0, -150);
+		toast.setDuration(Toast.LENGTH_LONG);
+		toast.show();
+	}
+	protected void showSaveToast(){
+		Toast toast = new Toast(this);
+		View view = LayoutInflater.from(this).inflate(R.layout.toast_save, null);
+		TextView tvMsg = (TextView) view.findViewById(R.id.toast_img_tv_msg);
+		tvMsg.setText(R.string.finish_saved);
+		toast.setView(view);
+		toast.setView(view);toast.setGravity(Gravity.CENTER, 0, -150);
+		toast.setDuration(Toast.LENGTH_LONG);
+		toast.show();
+		addAnimation();
+	}
+	
+	
+	
+	
+	private void addAnimation() {
+
+		final Window window = getWindow();
+		ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1);
+		valueAnimator.setDuration(2500);
+		valueAnimator.addUpdateListener(new AnimatorUpdateListener() {
+			@Override
+			public void onAnimationUpdate(ValueAnimator animation) {
+				float input = (Float) animation.getAnimatedValue();
+				Log.v(TAG, "input:" + input);
+				float d = 0.1f;
+				float alpha = 0.5f;
+				if (input < d) {
+					alpha = 1 - input * (0.5f / d);
+				} else if (input > (1 - d)) {
+					alpha = 0.5f + (input - (1 - d)) * (0.5f / d);
+				} else {
+					alpha = 0.5f;
+				}
+				WindowManager.LayoutParams params = window.getAttributes();
+				params.alpha = alpha;
+				Log.e(TAG, "亮度：" + params.alpha);
+				window.setAttributes(params);
+			}
+		});
+
+		valueAnimator.start();
+	}
+
+}

@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.qst.fly"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/launch_back">
+    android:background="@color/launch_back" >
 
     <ImageView 
-        android:id="@+id/img_launch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/launcher_page_text"
-        android:layout_marginTop="@dimen/launch_top"
-        />
-    <ImageView 
-        android:id="@+id/img_launch_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/cat_in_launch"
-        android:layout_alignParentBottom="true"
-        android:scaleType="fitEnd"/>
+      android:id="@+id/launch_back"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:src="@drawable/cat_in_launch"
+      android:layout_alignParentBottom="true"
+      android:scaleType="fitEnd"
+      android:visibility="gone"/>
+  <ImageView 
+      android:id="@+id/launch_icon"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:src="@drawable/launcher_page_text"
+      android:layout_marginTop="@dimen/launch_top"
+      android:visibility="gone"/>
+    
+    <com.qst.fly.widget.GifView
+        android:id="@+id/gifview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:gif="@drawable/beginmovie"
+        app:paused="true" />
 
 </RelativeLayout>

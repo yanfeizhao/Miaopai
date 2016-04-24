@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <LinearLayout
+        android:id="@+id/ll_bottom_menu"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="@dimen/top_of_bottom_menu"
+            android:background="@android:color/white"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/album"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" 
+                android:background="@drawable/selector_bottom_menu"
+                >
+                <TextView
+                    android:id="@+id/text_album_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/album"
+                    android:textSize="12sp" 
+                    android:layout_alignParentBottom="true"
+                    />
+                 <ImageView
+                    android:id="@+id/img_album_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_above="@id/text_album_text"
+                    android:src="@drawable/album" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/yanyi"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_bottom_menu" >
+                <TextView
+                    android:id="@+id/text_yanyi_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/yanyi"
+                    android:textSize="12sp" 
+                    android:layout_alignParentBottom="true"
+                    />
+                <ImageView
+                    android:id="@+id/img_yanyi_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_above="@id/text_yanyi_text"
+                    android:src="@drawable/yanyi" />
+            </RelativeLayout>
+
+           <RelativeLayout
+                android:id="@+id/super_star"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_bottom_menu" >
+                <TextView
+                    android:id="@+id/text_super_star_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/super_star"
+                    android:textSize="12sp" 
+                    android:layout_alignParentBottom="true"
+                    />
+                <ImageView
+                    android:id="@+id/img_superstar_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:src="@drawable/super_star"
+                    android:layout_above="@id/text_super_star_text" />
+            </RelativeLayout>
+
+           <RelativeLayout
+                android:id="@+id/cartoon"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" 
+                android:background="@drawable/selector_bottom_menu">
+
+
+                <TextView
+                    android:id="@+id/text_cartoon_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/cartoon"
+                    android:textSize="12sp" 
+                    android:layout_alignParentBottom="true"
+                    />
+                <ImageView
+                    android:id="@+id/img_cartoon_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:src="@drawable/cartoon"
+                    android:layout_above="@id/text_cartoon_text" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/animal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_bottom_menu" >
+                <TextView
+                    android:id="@+id/text_animal_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/animal"
+                    android:textSize="12sp" 
+                    android:layout_alignParentBottom="true"
+                    />
+                 <ImageView
+                    android:id="@+id/img_animal_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:src="@drawable/animal"
+                    android:layout_above="@id/text_animal_text" />
+            </RelativeLayout>
+        </LinearLayout>
+
+</LinearLayout>
