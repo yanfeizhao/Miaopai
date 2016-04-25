@@ -34,7 +34,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.meetme.android.horizontallistview.HorizontalListView;
 import com.qst.fly.R;
 import com.qst.fly.adapter.PictureSelectListAdapter;
 import com.qst.fly.application.MiaoPaiApplication;
@@ -47,6 +46,7 @@ import com.qst.fly.utils.CameraOperationHelper.CameraOverCallback;
 import com.qst.fly.utils.FileUtils;
 import com.qst.fly.utils.SharedPreferenceUtil;
 import com.qst.fly.utils.StringUtils;
+import com.qst.fly.widget.HorizontalListView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Picasso.LoadedFrom;
 import com.squareup.picasso.Target;
